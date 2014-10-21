@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from ..models import State, Company, Route
+from ..models import State, Company, RoadRoute
 
 
 class TestRouteAPI(APITestCase):
@@ -36,18 +36,18 @@ class TestRouteAPI(APITestCase):
             }
 
     def test_unlogged_response(self):
-        url = reverse('api:route-list')
+        url = reverse('api:road-route-list')
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_route_creation(self):
-        url = reverse('api:route-list')
+    def test_road_route_creation(self):
+        url = reverse('api:road-route-list')
         self.client.login(username=self.user.username, password='password')
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Route.objects.all().count(), 1)
+        self.assertEqual(RoadRoute.objects.all().count(), 1)
 
-    def test_invalid_route_creation(self):
+    def test_invalid_road_route_creation(self):
         data = {
             'company': self.company.id,
             'geom': {
@@ -56,8 +56,8 @@ class TestRouteAPI(APITestCase):
                 }
             }
 
-        url = reverse('api:route-list')
+        url = reverse('api:road-route-list')
         self.client.login(username=self.user.username, password='password')
         with self.assertRaises(ValidationError):
             self.client.post(url, data, format='json')
-        self.assertEqual(Route.objects.all().count(), 0)
+        self.assertEqual(RoadRoute.objects.all().count(), 0)

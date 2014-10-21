@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString
 from django.core.exceptions import ValidationError
 
-from ..models import State, Company, Route
+from ..models import State, Company, RoadRoute
 
 
 class TestRoute(TestCase):
@@ -21,7 +21,7 @@ class TestRoute(TestCase):
         state2.save()
         state2.company_set.add(self.company)
 
-        self.valid_route = Route(company=self.company,
+        self.valid_route = RoadRoute(company=self.company,
             geom=LineString([0.5, 0.5], [0.5, -0.5])
             )
         self.valid_route.save()
@@ -36,9 +36,9 @@ class TestRoute(TestCase):
 
     def test_route_creation(self):
         self.assertEqual(self.valid_route.__str__(), '%s' % self.valid_route.id)
-        self.assertEqual(Route.objects.all().count(), 1)
+        self.assertEqual(RoadRoute.objects.all().count(), 1)
 
         with self.assertRaises(ValidationError):
-            Route.objects.create(company=self.company,
+            RoadRoute.objects.create(company=self.company,
                 geom=LineString([0.5, 0.5], [2, 2])
                 )

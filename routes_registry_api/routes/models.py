@@ -25,7 +25,7 @@ class Company(models.Model):
         return '%s' % self.name
 
 
-class Route(models.Model):
+class RoadRoute(models.Model):
 
     company = models.ForeignKey(Company)
     geom = models.LineStringField(srid=4674)
@@ -42,4 +42,4 @@ class Route(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super(Route, self).save(*args, **kwargs)
+        super(RoadRoute, self).save(*args, **kwargs)

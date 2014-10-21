@@ -2,7 +2,7 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.serializers import ModelSerializer
 
-from .models import State, Company, Route
+from .models import State, Company, RoadRoute
 
 
 class CompanySerializer(ModelSerializer):
@@ -20,9 +20,9 @@ class StateSerializer(GeoFeatureModelSerializer):
         fields = ('code', 'name')
 
 
-class RouteSerializer(GeoFeatureModelSerializer):
+class RoadRouteSerializer(GeoFeatureModelSerializer):
 
     class Meta:
-        model = Route
+        model = RoadRoute
         geo_field = 'geom'
         fields = ('id', 'company')

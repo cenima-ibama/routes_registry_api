@@ -3,8 +3,8 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from .serializers import CompanySerializer, StateSerializer, RouteSerializer
-from .models import State, Company, Route
+from .serializers import CompanySerializer, StateSerializer, RoadRouteSerializer
+from .models import State, Company, RoadRoute
 
 
 class StateDetail(RetrieveUpdateDestroyAPIView):
@@ -25,13 +25,13 @@ class CompanyDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class RouteList(ListCreateAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
+class RoadRouteList(ListCreateAPIView):
+    queryset = RoadRoute.objects.all()
+    serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class RouteDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Route.objects.all()
-    serializer_class = RouteSerializer
+class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
+    queryset = RoadRoute.objects.all()
+    serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
