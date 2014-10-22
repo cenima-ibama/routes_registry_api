@@ -55,38 +55,6 @@ class RoadRoute(models.Model):
         verbose_name_plural = _('Road Routes')
 
 
-class AirRoute(models.Model):
-
-    company = models.ForeignKey(Company)
-    origin = models.PointField(srid=4674)
-    destination = models.PointField(srid=4674)
-    objects = models.GeoManager()
-
-    def __str__(self):
-        return '%s' % self.id
-
-    def clean(self):
-        self.clean_fields()
-
-        if self.origin.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The origin is not within the company allowed states.')
-                )
-
-        if self.destination.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The destination is not within the company allowed states.')
-                )
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super(AirRoute, self).save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = _('Air Route')
-        verbose_name_plural = _('Air Routes')
-
-
 class AerialRoute(models.Model):
 
     company = models.ForeignKey(Company)
@@ -117,3 +85,35 @@ class AerialRoute(models.Model):
     class Meta:
         verbose_name = _('Aerial Route')
         verbose_name_plural = _('Aerial Routes')
+
+
+class AquaticRoute(models.Model):
+
+    company = models.ForeignKey(Company)
+    origin = models.PointField(srid=4674)
+    destination = models.PointField(srid=4674)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.id
+
+    def clean(self):
+        self.clean_fields()
+
+        if self.origin.within(self.company.states.unionagg()) is False:
+            raise ValidationError(
+                _('The origin is not within the company allowed states.')
+                )
+
+        if self.destination.within(self.company.states.unionagg()) is False:
+            raise ValidationError(
+                _('The destination is not within the company allowed states.')
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(AquaticRoute, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Aquatic Route')
+        verbose_name_plural = _('Aquatic Routes')
