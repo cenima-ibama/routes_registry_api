@@ -82,6 +82,12 @@ class TestAerialRoute(TestCase):
                 destination=self.airport_c,
                 )
 
+        with self.assertRaises(ValidationError):
+            AerialRoute.objects.create(company=self.company,
+                origin=self.airport_a,
+                destination=self.airport_a,
+                )
+
         self.assertEqual(AerialRoute.objects.all().count(), 1)
 
 
@@ -120,6 +126,12 @@ class TestAquaticRoute(TestCase):
             AquaticRoute.objects.create(company=self.company,
                 origin=self.port_a,
                 destination=self.port_c,
+                )
+
+        with self.assertRaises(ValidationError):
+            AquaticRoute.objects.create(company=self.company,
+                origin=self.port_a,
+                destination=self.port_a,
                 )
 
         self.assertEqual(AquaticRoute.objects.all().count(), 1)

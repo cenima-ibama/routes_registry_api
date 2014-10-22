@@ -50,6 +50,8 @@ class Airport(models.Model):
 
 
 class RoadRoute(models.Model):
+    """Every road route is associated with a company and must be within the
+    allowed states of that company."""
 
     company = models.ForeignKey(Company)
     geom = models.LineStringField(srid=4674)
@@ -76,6 +78,9 @@ class RoadRoute(models.Model):
 
 
 class AerialRoute(models.Model):
+    """Every aerial route is associated with a company. The airports of origin
+    and destination must be differents and within the allowed states of
+    the company."""
 
     company = models.ForeignKey(Company)
     origin = models.ForeignKey(Airport, related_name="route_origin")
@@ -98,6 +103,11 @@ class AerialRoute(models.Model):
                 _('The destination is not within the company allowed states.')
                 )
 
+        if self.origin == self.destination:
+            raise ValidationError(
+                _('The destination airport must be different from the origin.')
+                )
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super(AerialRoute, self).save(*args, **kwargs)
@@ -108,6 +118,9 @@ class AerialRoute(models.Model):
 
 
 class AquaticRoute(models.Model):
+    """Every aquatic route is associated with a company. The ports of origin
+    and destination must be differents and within the allowed states of
+    the company."""
 
     company = models.ForeignKey(Company)
     origin = models.ForeignKey(Port, related_name="route_origin")
@@ -129,6 +142,12 @@ class AquaticRoute(models.Model):
             raise ValidationError(
                 _('The destination is not within the company allowed states.')
                 )
+
+        if self.origin == self.destination:
+            raise ValidationError(
+                _('The destination port must be different from the origin.')
+                )
+
 
     def save(self, *args, **kwargs):
         self.full_clean()

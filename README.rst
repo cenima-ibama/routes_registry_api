@@ -2,4 +2,4 @@
 Routes Registry API
 ========================
 
-API that will recieve and validate routes.
+API to receive, validate and store transportation routes of hazardous products.
