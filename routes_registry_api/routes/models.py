@@ -29,6 +29,26 @@ class Company(models.Model):
         verbose_name_plural = _('Companies')
 
 
+class Port(models.Model):
+
+    name = models.CharField(max_length=255)
+    geom = models.PointField(srid=4674)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.name
+
+
+class Airport(models.Model):
+
+    name = models.CharField(max_length=255)
+    geom = models.PointField(srid=4674)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.name
+
+
 class RoadRoute(models.Model):
 
     company = models.ForeignKey(Company)
@@ -58,8 +78,8 @@ class RoadRoute(models.Model):
 class AerialRoute(models.Model):
 
     company = models.ForeignKey(Company)
-    origin = models.PointField(srid=4674)
-    destination = models.PointField(srid=4674)
+    origin = models.ForeignKey(Airport, related_name="route_origin")
+    destination = models.ForeignKey(Airport, related_name="route_destination")
     objects = models.GeoManager()
 
     def __str__(self):
@@ -68,12 +88,12 @@ class AerialRoute(models.Model):
     def clean(self):
         self.clean_fields()
 
-        if self.origin.within(self.company.states.unionagg()) is False:
+        if self.origin.geom.within(self.company.states.unionagg()) is False:
             raise ValidationError(
                 _('The origin is not within the company allowed states.')
                 )
 
-        if self.destination.within(self.company.states.unionagg()) is False:
+        if self.destination.geom.within(self.company.states.unionagg()) is False:
             raise ValidationError(
                 _('The destination is not within the company allowed states.')
                 )
@@ -90,8 +110,8 @@ class AerialRoute(models.Model):
 class AquaticRoute(models.Model):
 
     company = models.ForeignKey(Company)
-    origin = models.PointField(srid=4674)
-    destination = models.PointField(srid=4674)
+    origin = models.ForeignKey(Port, related_name="route_origin")
+    destination = models.ForeignKey(Port, related_name="route_destination")
     objects = models.GeoManager()
 
     def __str__(self):
@@ -100,12 +120,12 @@ class AquaticRoute(models.Model):
     def clean(self):
         self.clean_fields()
 
-        if self.origin.within(self.company.states.unionagg()) is False:
+        if self.origin.geom.within(self.company.states.unionagg()) is False:
             raise ValidationError(
                 _('The origin is not within the company allowed states.')
                 )
 
-        if self.destination.within(self.company.states.unionagg()) is False:
+        if self.destination.geom.within(self.company.states.unionagg()) is False:
             raise ValidationError(
                 _('The destination is not within the company allowed states.')
                 )

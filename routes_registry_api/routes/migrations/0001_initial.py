@@ -14,23 +14,71 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Company',
+            name='AerialRoute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+                'verbose_name': 'Aerial Route',
+                'verbose_name_plural': 'Aerial Routes',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Airport',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(srid=4674)),
             ],
             options={
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='Route',
+            name='AquaticRoute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+                'verbose_name': 'Aquatic Route',
+                'verbose_name_plural': 'Aquatic Routes',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Company',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+            ],
+            options={
+                'verbose_name': 'Company',
+                'verbose_name_plural': 'Companies',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Port',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('geom', django.contrib.gis.db.models.fields.PointField(srid=4674)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='RoadRoute',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=4674)),
                 ('company', models.ForeignKey(to='routes.Company')),
             ],
             options={
+                'verbose_name': 'Road Route',
+                'verbose_name_plural': 'Road Routes',
             },
             bases=(models.Model,),
         ),
@@ -40,7 +88,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=50)),
                 ('code', models.CharField(max_length=2)),
-                ('geom', django.contrib.gis.db.models.fields.PolygonField(srid=4674)),
+                ('geom', django.contrib.gis.db.models.fields.MultiPolygonField(srid=4674)),
             ],
             options={
             },
@@ -56,6 +104,42 @@ class Migration(migrations.Migration):
             model_name='company',
             name='users',
             field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aquaticroute',
+            name='company',
+            field=models.ForeignKey(to='routes.Company'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aquaticroute',
+            name='destination',
+            field=models.ForeignKey(related_name='route_destination', to='routes.Port'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aquaticroute',
+            name='origin',
+            field=models.ForeignKey(related_name='route_origin', to='routes.Port'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aerialroute',
+            name='company',
+            field=models.ForeignKey(to='routes.Company'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aerialroute',
+            name='destination',
+            field=models.ForeignKey(related_name='route_destination', to='routes.Airport'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aerialroute',
+            name='origin',
+            field=models.ForeignKey(related_name='route_origin', to='routes.Airport'),
             preserve_default=True,
         ),
     ]

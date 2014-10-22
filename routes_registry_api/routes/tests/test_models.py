@@ -3,7 +3,8 @@ from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString, Point
 from django.core.exceptions import ValidationError
 
-from ..models import State, Company, RoadRoute, AerialRoute, AquaticRoute
+from ..models import State, Company, Port, Airport
+from ..models import RoadRoute, AerialRoute, AquaticRoute
 
 
 class TestRoadRoute(TestCase):
@@ -35,12 +36,13 @@ class TestRoadRoute(TestCase):
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(RoadRoute.objects.all().count(), 1)
 
         with self.assertRaises(ValidationError):
             RoadRoute.objects.create(company=self.company,
                 geom=LineString([0.5, 0.5], [2, 2])
                 )
+
+        self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 
 class TestAerialRoute(TestCase):
@@ -58,20 +60,29 @@ class TestAerialRoute(TestCase):
         state2.save()
         state2.company_set.add(self.company)
 
+        self.airport_a = Airport.objects.create(name="A", geom=Point([0.5, 0.5]))
+        self.airport_b = Airport.objects.create(name="B", geom=Point([0.5, -0.5]))
+        self.airport_c = Airport.objects.create(name="C", geom=Point([2, 2]))
+
+    def test_airport_creation(self):
+        self.assertEqual(self.airport_a.__str__(), 'A')
+        self.assertEqual(Airport.objects.all().count(), 3)
+
     def test_aerial_route_creation(self):
         valid_route = AerialRoute(company=self.company,
-            origin=Point([0.5, 0.5]),
-            destination=Point([0.5, -0.5]),
+            origin=self.airport_a,
+            destination=self.airport_b,
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(AerialRoute.objects.all().count(), 1)
 
         with self.assertRaises(ValidationError):
             AerialRoute.objects.create(company=self.company,
-                origin=Point([0.5, 0.5]),
-                destination=Point([2, 2]),
+                origin=self.airport_a,
+                destination=self.airport_c,
                 )
+
+        self.assertEqual(AerialRoute.objects.all().count(), 1)
 
 
 class TestAquaticRoute(TestCase):
@@ -89,17 +100,26 @@ class TestAquaticRoute(TestCase):
         state2.save()
         state2.company_set.add(self.company)
 
+        self.port_a = Port.objects.create(name="A", geom=Point([0.5, 0.5]))
+        self.port_b = Port.objects.create(name="B", geom=Point([0.5, -0.5]))
+        self.port_c = Port.objects.create(name="C", geom=Point([2, 2]))
+
+    def test_port_creation(self):
+        self.assertEqual(self.port_a.__str__(), 'A')
+        self.assertEqual(Port.objects.all().count(), 3)
+
     def test_aquatic_route_creation(self):
         valid_route = AquaticRoute(company=self.company,
-            origin=Point([0.5, 0.5]),
-            destination=Point([0.5, -0.5]),
+            origin=self.port_a,
+            destination=self.port_b,
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(AquaticRoute.objects.all().count(), 1)
 
         with self.assertRaises(ValidationError):
             AquaticRoute.objects.create(company=self.company,
-                origin=Point([0.5, 0.5]),
-                destination=Point([2, 2]),
+                origin=self.port_a,
+                destination=self.port_c,
                 )
+
+        self.assertEqual(AquaticRoute.objects.all().count(), 1)
