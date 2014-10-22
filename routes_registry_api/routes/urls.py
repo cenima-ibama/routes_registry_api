@@ -5,6 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import StateDetail
 from .views import CompanyList, CompanyDetail
+from .views import PortList, AirportList
 from .views import RoadRouteList, RoadRouteDetail
 
 
@@ -18,6 +19,12 @@ urlpatterns = patterns('',
     url(r'^company/(?P<pk>[0-9]+)/$',
         CompanyDetail.as_view(),
         name='company-detail'),
+    url(r'^ports/',
+        PortList.as_view(),
+        name='port-list'),
+    url(r'^airports/',
+        AirportList.as_view(),
+        name='airport-list'),
     url(r'^road-routes/',
         RoadRouteList.as_view(),
         name='road-route-list'),
