@@ -24,6 +24,10 @@ class Company(models.Model):
     def __str__(self):
         return '%s' % self.name
 
+    class Meta:
+        verbose_name = _('Company')
+        verbose_name_plural = _('Companies')
+
 
 class RoadRoute(models.Model):
 
@@ -43,3 +47,37 @@ class RoadRoute(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(RoadRoute, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Road Route')
+        verbose_name_plural = _('Road Routes')
+
+
+class AirRoute(models.Model):
+
+    company = models.ForeignKey(Company)
+    origin = models.PointField(srid=4674)
+    destination = models.PointField(srid=4674)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.id
+
+    def clean(self):
+        if self.origin.within(self.company.states.unionagg()) is False:
+            raise ValidationError(
+                _('The origin is not within the company allowed states.')
+                )
+
+        if self.destination.within(self.company.states.unionagg()) is False:
+            raise ValidationError(
+                _('The destination is not within the company allowed states.')
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(AirRoute, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('Air Route')
+        verbose_name_plural = _('Air Routes')
