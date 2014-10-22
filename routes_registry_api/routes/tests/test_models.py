@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString, Point
 from django.core.exceptions import ValidationError
 
-from ..models import State, Company, RoadRoute, AirRoute
+from ..models import State, Company, RoadRoute, AerialRoute
 
 
 class TestRoadRoute(TestCase):
@@ -43,7 +43,7 @@ class TestRoadRoute(TestCase):
                 )
 
 
-class TestAirRoute(TestCase):
+class TestAerialRoute(TestCase):
 
     def setUp(self):
         self.company = Company.objects.create(name="Global")
@@ -58,17 +58,17 @@ class TestAirRoute(TestCase):
         state2.save()
         state2.company_set.add(self.company)
 
-    def test_air_route_creation(self):
-        valid_route = AirRoute(company=self.company,
+    def test_aerial_route_creation(self):
+        valid_route = AerialRoute(company=self.company,
             origin=Point([0.5, 0.5]),
             destination=Point([0.5, -0.5]),
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(AirRoute.objects.all().count(), 1)
+        self.assertEqual(AerialRoute.objects.all().count(), 1)
 
         with self.assertRaises(ValidationError):
-            AirRoute.objects.create(company=self.company,
+            AerialRoute.objects.create(company=self.company,
                 origin=Point([0.5, 0.5]),
                 destination=Point([2, 2]),
                 )
