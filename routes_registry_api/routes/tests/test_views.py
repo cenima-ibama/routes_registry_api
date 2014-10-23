@@ -35,6 +35,22 @@ class TestStateAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class TestPortAPI(APITestCase):
+
+    def test_port_list_response(self):
+        url = reverse('api:port-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestAirportAPI(APITestCase):
+
+    def test_airport_list_response(self):
+        url = reverse('api:airport-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
 class TestRoadRouteAPI(APITestCase):
 
     def setUp(self):
@@ -64,17 +80,26 @@ class TestRoadRouteAPI(APITestCase):
         url = reverse('api:road-route-list')
 
         response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_road_route_creation(self):
+
         url = reverse('api:road-route-list')
         self.client.login(username=self.user.username, password='password')
+
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RoadRoute.objects.all().count(), 1)
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        url = reverse('api:road-route-detail', args=[1])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_invalid_road_route_creation(self):
         data = {
