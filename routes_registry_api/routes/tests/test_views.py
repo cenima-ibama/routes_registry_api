@@ -3,11 +3,20 @@ from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.test import TestCase
 
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from ..models import State, Company, RoadRoute
+
+
+class TestAPIAuthURL(TestCase):
+
+    def test_api_auth_response(self):
+        url = reverse('rest_framework:login')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class TestCompanyAPI(APITestCase):

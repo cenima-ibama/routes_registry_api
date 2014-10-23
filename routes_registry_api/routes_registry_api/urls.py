@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'router.views.home', name='home'),
     url(r'^api/', include('routes.urls', namespace='api')),
     url(r'^api-auth/', include('rest_framework.urls',
-                               namespace='api_auth')),
+                               namespace='rest_framework')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

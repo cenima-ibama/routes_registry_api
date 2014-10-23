@@ -15,36 +15,36 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
 
 
 class CompanyList(ListCreateAPIView):
-    queryset = Company.objects.all()
+    model = Company
+    serializer_class = CompanySerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class CompanyDetail(RetrieveUpdateDestroyAPIView):
+    model = Company
     serializer_class = CompanySerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class PortList(ListCreateAPIView):
-    queryset = Port.objects.all()
+    model = Port
     serializer_class = PortSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class AirportList(ListCreateAPIView):
-    queryset = Airport.objects.all()
+    model = Airport
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class CompanyDetail(RetrieveUpdateDestroyAPIView):
-    queryset = Company.objects.all()
-    serializer_class = CompanySerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
-
-
 class RoadRouteList(ListCreateAPIView):
-    queryset = RoadRoute.objects.all()
+    model = RoadRoute
     serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticated,)
 
 
 class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
-    queryset = RoadRoute.objects.all()
+    model = RoadRoute
     serializer_class = RoadRouteSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
