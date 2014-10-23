@@ -10,7 +10,32 @@ from rest_framework import status
 from ..models import State, Company, RoadRoute
 
 
-class TestRouteAPI(APITestCase):
+class TestCompanyAPI(APITestCase):
+
+    def test_company_list_response(self):
+        url = reverse('api:company-list')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_company_detail_response(self):
+        company = Company.objects.create(name="Global")
+        url = reverse('api:company-detail', args=[company.pk])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestStateAPI(APITestCase):
+
+    def test_state_detail_response(self):
+        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
+        state = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        state.save()
+        url = reverse('api:state-detail', args=[state.pk])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestRoadRouteAPI(APITestCase):
 
     def setUp(self):
         self.company = Company.objects.create(name="Global")
@@ -37,6 +62,10 @@ class TestRouteAPI(APITestCase):
 
     def test_unlogged_response(self):
         url = reverse('api:road-route-list')
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
