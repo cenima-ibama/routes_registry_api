@@ -55,6 +55,7 @@ class RoadRoute(models.Model):
 
     company = models.ForeignKey(Company)
     geom = models.LineStringField(srid=4674)
+    creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
 
     def __str__(self):
@@ -85,6 +86,7 @@ class AerialRoute(models.Model):
     company = models.ForeignKey(Company)
     origin = models.ForeignKey(Airport, related_name="route_origin")
     destination = models.ForeignKey(Airport, related_name="route_destination")
+    creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
 
     def __str__(self):
@@ -125,6 +127,7 @@ class AquaticRoute(models.Model):
     company = models.ForeignKey(Company)
     origin = models.ForeignKey(Port, related_name="route_origin")
     destination = models.ForeignKey(Port, related_name="route_destination")
+    creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
 
     def __str__(self):
