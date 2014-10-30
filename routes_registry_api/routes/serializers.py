@@ -43,3 +43,10 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
         model = RoadRoute
         geo_field = 'geom'
         fields = ('id', 'company')
+
+
+class AerialRouteSerializer(ModelSerializer):
+
+    class Meta:
+        model = AerialRoute
+        fields = ('id', 'company', 'origin', 'destination')

@@ -8,7 +8,7 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from ..models import State, Company, RoadRoute
+from ..models import State, Company, Airport, RoadRoute
 
 
 class TestAPIAuthURL(TestCase):
@@ -40,7 +40,8 @@ class TestCompanyAPI(APITestCase):
         self.client.login(username=self.user.username, password='password')
         self.client.post(self.url, self.data, format='json')
 
-        url = reverse('api:company-detail', args=[1])
+        company_pk = Company.objects.all()[0].pk
+        url = reverse('api:company-detail', args=[company_pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -136,3 +137,71 @@ class TestRoadRouteAPI(APITestCase):
         with self.assertRaises(ValidationError):
             self.client.post(url, data, format='json')
         self.assertEqual(RoadRoute.objects.all().count(), 0)
+
+
+class TestAerialRouteAPI(APITestCase):
+
+    def setUp(self):
+        self.company = Company.objects.create(name="Global")
+
+        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
+        state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        state1.save()
+        state1.company_set.add(self.company)
+
+        poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
+        state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
+        state2.save()
+        state2.company_set.add(self.company)
+
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+
+        self.airport_a = {
+            'name': "Port A",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, 0.5]
+                }
+            }
+        self.airport_b = {
+            'name': "Port B",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, -0.5]
+                }
+            }
+
+    def test_aerial_route_list(self):
+        url = reverse('api:aerial-route-list')
+        self.client.login(username=self.user.username, password='password')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unlogged_aerial_route(self):
+        url = reverse('api:airport-list')
+        response = self.client.post(url, self.airport_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_aerial_route_creation(self):
+        url = reverse('api:airport-list')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.airport_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.airport_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        id_a, id_b = [airport.id for airport in Airport.objects.all()]
+        aerial_route = {
+            'company': self.company.id,
+            'origin': id_a,
+            'destination': id_b
+            }
+        url = reverse('api:aerial-route-list')
+        response = self.client.post(url, aerial_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = reverse('api:aerial-route-detail', args=[id_a])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

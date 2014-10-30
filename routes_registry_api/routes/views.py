@@ -4,8 +4,8 @@ from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .serializers import CompanySerializer, StateSerializer, PortSerializer
-from .serializers import AirportSerializer, RoadRouteSerializer
-from .models import State, Company, Port, Airport, RoadRoute
+from .serializers import AirportSerializer, RoadRouteSerializer, AerialRouteSerializer
+from .models import State, Company, Port, Airport, RoadRoute, AerialRoute
 
 
 class StateDetail(RetrieveUpdateDestroyAPIView):
@@ -47,4 +47,16 @@ class RoadRouteList(ListCreateAPIView):
 class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
     model = RoadRoute
     serializer_class = RoadRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class AerialRouteList(ListCreateAPIView):
+    model = AerialRoute
+    serializer_class = AerialRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
+    model = AerialRoute
+    serializer_class = AerialRouteSerializer
     permission_classes = (IsAuthenticated,)
