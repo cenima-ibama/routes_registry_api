@@ -8,6 +8,7 @@ from .views import CompanyList, CompanyDetail
 from .views import PortList, AirportList
 from .views import RoadRouteList, RoadRouteDetail
 from .views import AerialRouteList, AerialRouteDetail
+from .views import AquaticRouteList, AquaticRouteDetail
 
 
 urlpatterns = patterns('',
@@ -38,6 +39,12 @@ urlpatterns = patterns('',
     url(r'^aerial-routes/(?P<pk>[0-9]+)/$',
         AerialRouteDetail.as_view(),
         name='aerial-route-detail'),
+    url(r'^aquatic-routes/$',
+        AquaticRouteList.as_view(),
+        name='aquatic-route-list'),
+    url(r'^aquatic-routes/(?P<pk>[0-9]+)/$',
+        AquaticRouteDetail.as_view(),
+        name='aquatic-route-detail'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

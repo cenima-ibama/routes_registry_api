@@ -50,3 +50,10 @@ class AerialRouteSerializer(ModelSerializer):
     class Meta:
         model = AerialRoute
         fields = ('id', 'company', 'origin', 'destination')
+
+
+class AquaticRouteSerializer(ModelSerializer):
+
+    class Meta:
+        model = AquaticRoute
+        fields = ('id', 'company', 'origin', 'destination')

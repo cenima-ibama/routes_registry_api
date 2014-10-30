@@ -8,7 +8,7 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from ..models import State, Company, Airport, RoadRoute
+from ..models import State, Company, Airport, Port, RoadRoute
 
 
 class TestAPIAuthURL(TestCase):
@@ -157,14 +157,14 @@ class TestAerialRouteAPI(APITestCase):
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
 
         self.airport_a = {
-            'name': "Port A",
+            'name': "Airport A",
             'geom': {
                 "type": "Point",
                 "coordinates": [0.5, 0.5]
                 }
             }
         self.airport_b = {
-            'name': "Port B",
+            'name': "Airport B",
             'geom': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
@@ -203,5 +203,73 @@ class TestAerialRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         url = reverse('api:aerial-route-detail', args=[id_a])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class TestAquaticRouteAPI(APITestCase):
+
+    def setUp(self):
+        self.company = Company.objects.create(name="Global")
+
+        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
+        state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        state1.save()
+        state1.company_set.add(self.company)
+
+        poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
+        state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
+        state2.save()
+        state2.company_set.add(self.company)
+
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+
+        self.port_a = {
+            'name': "Port A",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, 0.5]
+                }
+            }
+        self.port_b = {
+            'name': "Port B",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, -0.5]
+                }
+            }
+
+    def test_aquatic_route_list(self):
+        url = reverse('api:aquatic-route-list')
+        self.client.login(username=self.user.username, password='password')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unlogged_aquatic_route(self):
+        url = reverse('api:port-list')
+        response = self.client.post(url, self.port_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_aquatic_route_creation(self):
+        url = reverse('api:port-list')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.port_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.port_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        id_a, id_b = [port.id for port in Port.objects.all()]
+        aquatic_route = {
+            'company': self.company.id,
+            'origin': id_a,
+            'destination': id_b
+            }
+        url = reverse('api:aquatic-route-list')
+        response = self.client.post(url, aquatic_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        url = reverse('api:aquatic-route-detail', args=[id_a])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
