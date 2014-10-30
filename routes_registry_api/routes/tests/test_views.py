@@ -21,14 +21,26 @@ class TestAPIAuthURL(TestCase):
 
 class TestCompanyAPI(APITestCase):
 
+    def setUp(self):
+        self.data = {"name": "Global"}
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+        self.url = reverse('api:company-list')
+
     def test_company_list_response(self):
-        url = reverse('api:company-list')
-        response = self.client.get(url, format='json')
+        response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        response = self.client.post(self.url, self.data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        self.client.login(username=self.user.username, password='password')
+        self.client.post(self.url, self.data, format='json')
+
     def test_company_detail_response(self):
-        company = Company.objects.create(name="Global")
-        url = reverse('api:company-detail', args=[company.pk])
+        self.client.login(username=self.user.username, password='password')
+        self.client.post(self.url, self.data, format='json')
+
+        url = reverse('api:company-detail', args=[1])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
