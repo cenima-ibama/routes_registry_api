@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .serializers import CompanySerializer, StateSerializer, PortSerializer
@@ -8,6 +8,7 @@ from .serializers import AirportSerializer, RoadRouteSerializer
 from .serializers import AquaticRouteSerializer, AerialRouteSerializer
 from .models import State, Company, Port, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
+
 
 class StateDetail(RetrieveUpdateDestroyAPIView):
     model = State
@@ -61,6 +62,17 @@ class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
     model = AerialRoute
     serializer_class = AerialRouteSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class AerialRouteOrigin(ListAPIView):
+    '''Return a GeoJSON with the origin airport.'''
+    model = Airport
+    serializer_class = AirportSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(AerialRouteOrigin, self).get_queryset()
+        return queryset.filter(route_origin__pk=self.kwargs.get('pk'))
 
 
 class AquaticRouteList(ListCreateAPIView):

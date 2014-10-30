@@ -206,6 +206,10 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        url = reverse('api:aerial-route-origin', args=[id_a])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class TestAquaticRouteAPI(APITestCase):
 

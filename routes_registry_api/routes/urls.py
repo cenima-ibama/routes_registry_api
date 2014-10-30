@@ -7,7 +7,7 @@ from .views import StateDetail
 from .views import CompanyList, CompanyDetail
 from .views import PortList, AirportList
 from .views import RoadRouteList, RoadRouteDetail
-from .views import AerialRouteList, AerialRouteDetail
+from .views import AerialRouteList, AerialRouteDetail, AerialRouteOrigin
 from .views import AquaticRouteList, AquaticRouteDetail
 
 
@@ -39,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^aerial-routes/(?P<pk>[0-9]+)/$',
         AerialRouteDetail.as_view(),
         name='aerial-route-detail'),
+    url(r'^aerial-routes/(?P<pk>[0-9]+)/origin/$',
+        AerialRouteOrigin.as_view(),
+        name='aerial-route-origin'),
     url(r'^aquatic-routes/$',
         AquaticRouteList.as_view(),
         name='aquatic-route-list'),
