@@ -29,12 +29,16 @@ urlpatterns = patterns('',
     url(r'^airports/$',
         AirportList.as_view(),
         name='airport-list'),
+
+    ### road routes urls
     url(r'^road-routes/$',
         RoadRouteList.as_view(),
         name='road-route-list'),
     url(r'^road-routes/(?P<pk>[0-9]+)/$',
         RoadRouteDetail.as_view(),
         name='road-route-detail'),
+
+    ### aerial routes urls
     url(r'^aerial-routes/$',
         AerialRouteList.as_view(),
         name='aerial-route-list'),
@@ -47,6 +51,8 @@ urlpatterns = patterns('',
     url(r'^aerial-routes/(?P<pk>[0-9]+)/destination/$',
         AerialRouteDestination.as_view(),
         name='aerial-route-destination'),
+
+    ### aquatic routes urls
     url(r'^aquatic-routes/$',
         AquaticRouteList.as_view(),
         name='aquatic-route-list'),

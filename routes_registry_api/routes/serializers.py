@@ -42,7 +42,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = RoadRoute
         geo_field = 'geom'
-        fields = ('id', 'company')
+        fields = ('id', 'company', 'creation_date')
 
 
 class AerialRouteSerializer(ModelSerializer):
@@ -50,7 +50,8 @@ class AerialRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AerialRoute
-        fields = ('id', 'company', 'origin', 'destination', 'route')
+        fields = ('id', 'company', 'origin', 'destination', 'route',
+            'creation_date')
 
 
 class AquaticRouteSerializer(ModelSerializer):
@@ -58,4 +59,5 @@ class AquaticRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AquaticRoute
-        fields = ('id', 'company', 'origin', 'destination', 'route')
+        fields = ('id', 'company', 'origin', 'destination', 'route',
+            'creation_date')
