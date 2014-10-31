@@ -92,6 +92,9 @@ class AerialRoute(models.Model):
     def __str__(self):
         return '%s' % self.id
 
+    def route(self):
+        return '%s - %s' % (self.origin.name, self.destination.name)
+
     def clean(self):
         self.clean_fields()
 
@@ -132,6 +135,9 @@ class AquaticRoute(models.Model):
 
     def __str__(self):
         return '%s' % self.id
+
+    def route(self):
+        return '%s - %s' % (self.origin.name, self.destination.name)
 
     def clean(self):
         self.clean_fields()

@@ -75,6 +75,9 @@ class TestAerialRoute(TestCase):
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
+        self.assertEqual(valid_route.route(),
+            '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
+            )
 
         with self.assertRaises(ValidationError):
             AerialRoute.objects.create(company=self.company,
@@ -121,6 +124,9 @@ class TestAquaticRoute(TestCase):
             )
         valid_route.save()
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
+        self.assertEqual(valid_route.route(),
+            '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
+            )
 
         with self.assertRaises(ValidationError):
             AquaticRoute.objects.create(company=self.company,

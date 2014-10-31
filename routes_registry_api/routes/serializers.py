@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, Field
 
 from .models import State, Company, Port, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
@@ -18,7 +18,7 @@ class StateSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = State
         geo_field = 'geom'
-        fields = ('code', 'name')
+        fields = ('id', 'code', 'name')
 
 
 class PortSerializer(GeoFeatureModelSerializer):
@@ -46,14 +46,16 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
 
 
 class AerialRouteSerializer(ModelSerializer):
+    route = Field(source='route')
 
     class Meta:
         model = AerialRoute
-        fields = ('id', 'company', 'origin', 'destination')
+        fields = ('id', 'company', 'origin', 'destination', 'route')
 
 
 class AquaticRouteSerializer(ModelSerializer):
+    route = Field(source='route')
 
     class Meta:
         model = AquaticRoute
-        fields = ('id', 'company', 'origin', 'destination')
+        fields = ('id', 'company', 'origin', 'destination', 'route')
