@@ -28,6 +28,28 @@ class CompanyDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
+class CompanyAerialRoutes(ListAPIView):
+    '''Return all aerial routes of a company.'''
+    model = AerialRoute
+    serializer_class = AerialRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(CompanyAerialRoutes, self).get_queryset()
+        return queryset.filter(company__pk=self.kwargs.get('pk'))
+
+
+class CompanyAquaticRoutes(ListAPIView):
+    '''Return all aquatic routes of a company.'''
+    model = AquaticRoute
+    serializer_class = AquaticRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(CompanyAquaticRoutes, self).get_queryset()
+        return queryset.filter(company__pk=self.kwargs.get('pk'))
+
+
 class PortList(ListCreateAPIView):
     model = Port
     serializer_class = PortSerializer
