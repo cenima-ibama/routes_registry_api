@@ -65,7 +65,7 @@ class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
 
 
 class AerialRouteOrigin(ListAPIView):
-    '''Return a GeoJSON with the origin airport.'''
+    '''Return a GeoJSON with the origin airport of the route.'''
     model = Airport
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticated,)
@@ -73,6 +73,17 @@ class AerialRouteOrigin(ListAPIView):
     def get_queryset(self):
         queryset = super(AerialRouteOrigin, self).get_queryset()
         return queryset.filter(route_origin__pk=self.kwargs.get('pk'))
+
+
+class AerialRouteDestination(ListAPIView):
+    '''Return a GeoJSON with the destination airport of the route.'''
+    model = Airport
+    serializer_class = AirportSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(AerialRouteDestination, self).get_queryset()
+        return queryset.filter(route_destination__pk=self.kwargs.get('pk'))
 
 
 class AquaticRouteList(ListCreateAPIView):
@@ -85,3 +96,25 @@ class AquaticRouteDetail(RetrieveUpdateDestroyAPIView):
     model = AquaticRoute
     serializer_class = AquaticRouteSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class AquaticRouteOrigin(ListAPIView):
+    '''Return a GeoJSON with the origin port of the route.'''
+    model = Port
+    serializer_class = AirportSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(AquaticRouteOrigin, self).get_queryset()
+        return queryset.filter(route_origin__pk=self.kwargs.get('pk'))
+
+
+class AquaticRouteDestination(ListAPIView):
+    '''Return a GeoJSON with the destination port of the route.'''
+    model = Port
+    serializer_class = AirportSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(AquaticRouteDestination, self).get_queryset()
+        return queryset.filter(route_destination__pk=self.kwargs.get('pk'))
