@@ -5,9 +5,9 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import StateDetail
 from .views import CompanyList, CompanyDetail
-from .views import CompanyAerialRoutes, CompanyAquaticRoutes
+from .views import CompanyRoadRoutes, CompanyAerialRoutes, CompanyAquaticRoutes
 from .views import PortList, AirportList
-from .views import RoadRouteList, RoadRouteDetail
+from .views import RoadRouteList, RoadRouteDetail, RoadRouteGeoJSONDetail
 from .views import AerialRouteList, AerialRouteDetail
 from .views import AerialRouteOrigin, AerialRouteDestination
 from .views import AquaticRouteList, AquaticRouteDetail
@@ -32,6 +32,9 @@ urlpatterns = patterns('',
     url(r'^companies/(?P<pk>[0-9]+)/$',
         CompanyDetail.as_view(),
         name='company-detail'),
+    url(r'^companies/(?P<pk>[0-9]+)/road-routes/$',
+        CompanyRoadRoutes.as_view(),
+        name='company-road-routes'),
     url(r'^companies/(?P<pk>[0-9]+)/aerial-routes/$',
         CompanyAerialRoutes.as_view(),
         name='company-aerial-routes'),
@@ -46,6 +49,9 @@ urlpatterns = patterns('',
     url(r'^road-routes/(?P<pk>[0-9]+)/$',
         RoadRouteDetail.as_view(),
         name='road-route-detail'),
+    url(r'^road-routes/(?P<pk>[0-9]+)/geojson/$',
+        RoadRouteGeoJSONDetail.as_view(),
+        name='road-route-geojson-detail'),
 
     ### aerial routes urls
     url(r'^aerial-routes/$',

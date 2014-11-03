@@ -4,7 +4,8 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .serializers import CompanySerializer, StateSerializer, PortSerializer
-from .serializers import AirportSerializer, RoadRouteSerializer
+from .serializers import AirportSerializer
+from .serializers import RoadRouteSerializer, RoadRouteListSerializer
 from .serializers import AquaticRouteSerializer, AerialRouteSerializer
 from .models import State, Company, Port, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
@@ -29,6 +30,17 @@ class CompanyDetail(RetrieveUpdateDestroyAPIView):
     model = Company
     serializer_class = CompanySerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class CompanyRoadRoutes(ListAPIView):
+    '''List all road routes of a company'''
+    model = RoadRoute
+    serializer_class = RoadRouteListSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(CompanyRoadRoutes, self).get_queryset()
+        return queryset.filter(company__pk=self.kwargs.get('pk'))
 
 
 class CompanyAerialRoutes(ListAPIView):
@@ -79,6 +91,17 @@ class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
     model = RoadRoute
     serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticated,)
+
+
+class RoadRouteGeoJSONDetail(ListAPIView):
+    '''Detail of RoadRoutes in GeoJSON FeatureCollection format'''
+    model = RoadRoute
+    serializer_class = RoadRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = super(RoadRouteGeoJSONDetail, self).get_queryset()
+        return queryset.filter(pk=self.kwargs.get('pk'))
 
 
 class AerialRouteList(ListCreateAPIView):

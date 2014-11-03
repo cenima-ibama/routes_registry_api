@@ -45,6 +45,15 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
         fields = ('id', 'company', 'creation_date')
 
 
+class RoadRouteListSerializer(ModelSerializer):
+    '''A serializer without geo_field made only to return a list of RoadRoutes
+    of each company'''
+
+    class Meta:
+        model = RoadRoute
+        fields = ('id', 'creation_date')
+
+
 class AerialRouteSerializer(ModelSerializer):
     route = Field(source='route')
 

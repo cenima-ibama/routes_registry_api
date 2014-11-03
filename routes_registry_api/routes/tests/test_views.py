@@ -46,6 +46,20 @@ class TestCompanyAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_company_roadroutes_response(self):
+        self.client.login(username=self.user.username, password='password')
+        self.client.post(self.url, self.data, format='json')
+
+        company_pk = Company.objects.all()[0].pk
+        url = reverse('api:company-road-routes', args=[company_pk])
+
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.client.logout()
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
     def test_company_aerialroutes_response(self):
         self.client.login(username=self.user.username, password='password')
         self.client.post(self.url, self.data, format='json')
@@ -149,6 +163,10 @@ class TestRoadRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         url = reverse('api:road-route-detail', args=[1])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        url = reverse('api:road-route-geojson-detail', args=[1])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
