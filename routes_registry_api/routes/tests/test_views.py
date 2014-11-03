@@ -60,7 +60,6 @@ class TestCompanyAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-
     def test_company_aquaticroutes_response(self):
         self.client.login(username=self.user.username, password='password')
         self.client.post(self.url, self.data, format='json')
