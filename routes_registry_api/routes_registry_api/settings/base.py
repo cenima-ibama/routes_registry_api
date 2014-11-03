@@ -203,6 +203,7 @@ INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
 
 INSTALLED_APPS += (
     'rest_framework',
+    'rest_framework_swagger',
 )
 ########## END APP CONFIGURATION
 
