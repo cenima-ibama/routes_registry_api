@@ -21,7 +21,8 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^api-docs/', include('rest_framework_swagger.urls')),
+    url(r'^api-docs/', include('rest_framework_swagger.urls',
+                                namespace='api_docs')),
 )
 
 # Uncomment the next line to serve media files in dev.
