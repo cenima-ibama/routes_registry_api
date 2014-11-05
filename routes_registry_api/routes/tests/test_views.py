@@ -8,7 +8,8 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from ..models import State, Company, Airport, Port, RoadRoute
+from ..models import State, Company, Airport, Port
+from ..models import RoadRoute, AerialRoute, AquaticRoute
 
 
 class TestAPIAuthURL(TestCase):
@@ -162,7 +163,8 @@ class TestRoadRouteAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        url = reverse('api:road-route-detail', args=[1])
+        pk = RoadRoute.objects.all()[0].pk
+        url = reverse('api:road-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -249,7 +251,8 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.post(url, aerial_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = reverse('api:aerial-route-detail', args=[id_a])
+        pk = AerialRoute.objects.all()[0].pk
+        url = reverse('api:aerial-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -325,7 +328,8 @@ class TestAquaticRouteAPI(APITestCase):
         response = self.client.post(url, aquatic_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        url = reverse('api:aquatic-route-detail', args=[id_a])
+        pk = AquaticRoute.objects.all()[0].pk
+        url = reverse('api:aquatic-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
