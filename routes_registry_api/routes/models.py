@@ -1,5 +1,4 @@
 from django.contrib.gis.db import models
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -13,20 +12,6 @@ class State(models.Model):
 
     def __str__(self):
         return '%s' % self.name
-
-
-class Company(models.Model):
-
-    name = models.CharField(max_length=255)
-    states = models.ManyToManyField(State)
-    users = models.ManyToManyField(User)
-
-    def __str__(self):
-        return '%s' % self.name
-
-    class Meta:
-        verbose_name = _('Company')
-        verbose_name_plural = _('Companies')
 
 
 class Port(models.Model):
@@ -53,7 +38,8 @@ class RoadRoute(models.Model):
     """Every road route is associated with a company and must be within the
     allowed states of that company."""
 
-    company = models.ForeignKey(Company)
+    company = models.IntegerField()
+    states = models.ManyToManyField(State)
     geom = models.LineStringField(srid=4674)
     creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
@@ -61,17 +47,11 @@ class RoadRoute(models.Model):
     def __str__(self):
         return '%s' % self.id
 
-    def clean(self):
-        self.clean_fields()
-
-        if self.geom.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('Route is not within the company allowed states.')
-                )
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super(RoadRoute, self).save(*args, **kwargs)
+    def valid(self):
+        if self.geom.within(self.states.unionagg()):
+            return True
+        else:
+            return False
 
     class Meta:
         verbose_name = _('Road Route')
@@ -83,7 +63,8 @@ class AerialRoute(models.Model):
     and destination must be differents and within the allowed states of
     the company."""
 
-    company = models.ForeignKey(Company)
+    company = models.IntegerField()
+    states = models.ManyToManyField(State)
     origin = models.ForeignKey(Airport, related_name="route_origin")
     destination = models.ForeignKey(Airport, related_name="route_destination")
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -95,27 +76,12 @@ class AerialRoute(models.Model):
     def route(self):
         return '%s - %s' % (self.origin.name, self.destination.name)
 
-    def clean(self):
-        self.clean_fields()
-
-        if self.origin.geom.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The origin is not within the company allowed states.')
-                )
-
-        if self.destination.geom.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The destination is not within the company allowed states.')
-                )
-
-        if self.origin == self.destination:
-            raise ValidationError(
-                _('The destination airport must be different from the origin.')
-                )
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super(AerialRoute, self).save(*args, **kwargs)
+    def valid(self):
+        if (self.origin.geom.within(self.states.unionagg()) and
+            self.destination.geom.within(self.states.unionagg())):
+            return True
+        else:
+            return False
 
     class Meta:
         verbose_name = _('Aerial Route')
@@ -127,7 +93,8 @@ class AquaticRoute(models.Model):
     and destination must be differents and within the allowed states of
     the company."""
 
-    company = models.ForeignKey(Company)
+    company = models.IntegerField()
+    states = models.ManyToManyField(State)
     origin = models.ForeignKey(Port, related_name="route_origin")
     destination = models.ForeignKey(Port, related_name="route_destination")
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -139,28 +106,12 @@ class AquaticRoute(models.Model):
     def route(self):
         return '%s - %s' % (self.origin.name, self.destination.name)
 
-    def clean(self):
-        self.clean_fields()
-
-        if self.origin.geom.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The origin is not within the company allowed states.')
-                )
-
-        if self.destination.geom.within(self.company.states.unionagg()) is False:
-            raise ValidationError(
-                _('The destination is not within the company allowed states.')
-                )
-
-        if self.origin == self.destination:
-            raise ValidationError(
-                _('The destination port must be different from the origin.')
-                )
-
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super(AquaticRoute, self).save(*args, **kwargs)
+    def valid(self):
+        if (self.origin.geom.within(self.states.unionagg()) and
+            self.destination.geom.within(self.states.unionagg())):
+            return True
+        else:
+            return False
 
     class Meta:
         verbose_name = _('Aquatic Route')

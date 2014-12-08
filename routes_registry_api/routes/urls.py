@@ -4,8 +4,6 @@ from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import StateDetail
-from .views import CompanyList, CompanyDetail
-from .views import CompanyRoadRoutes, CompanyAerialRoutes, CompanyAquaticRoutes
 from .views import PortList, AirportList
 from .views import RoadRouteList, RoadRouteDetail, RoadRouteGeoJSONDetail
 from .views import AerialRouteList, AerialRouteDetail
@@ -24,23 +22,6 @@ urlpatterns = patterns('',
     url(r'^airports/$',
         AirportList.as_view(),
         name='airport-list'),
-
-    ### companies urls
-    url(r'^companies/$',
-        CompanyList.as_view(),
-        name='company-list'),
-    url(r'^companies/(?P<pk>[0-9]+)/$',
-        CompanyDetail.as_view(),
-        name='company-detail'),
-    url(r'^companies/(?P<pk>[0-9]+)/road-routes/$',
-        CompanyRoadRoutes.as_view(),
-        name='company-road-routes'),
-    url(r'^companies/(?P<pk>[0-9]+)/aerial-routes/$',
-        CompanyAerialRoutes.as_view(),
-        name='company-aerial-routes'),
-    url(r'^companies/(?P<pk>[0-9]+)/aquatic-routes/$',
-        CompanyAquaticRoutes.as_view(),
-        name='company-aquatic-routes'),
 
     ### road routes urls
     url(r'^road-routes/$',

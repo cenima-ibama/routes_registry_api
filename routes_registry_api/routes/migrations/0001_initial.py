@@ -2,14 +2,12 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from django.conf import settings
 import django.contrib.gis.db.models.fields
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
@@ -17,6 +15,8 @@ class Migration(migrations.Migration):
             name='AerialRoute',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company', models.IntegerField()),
+                ('creation_date', models.DateTimeField(auto_now_add=True)),
             ],
             options={
                 'verbose_name': 'Aerial Route',
@@ -39,22 +39,12 @@ class Migration(migrations.Migration):
             name='AquaticRoute',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company', models.IntegerField()),
+                ('creation_date', models.DateTimeField(auto_now_add=True)),
             ],
             options={
                 'verbose_name': 'Aquatic Route',
                 'verbose_name_plural': 'Aquatic Routes',
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
-            name='Company',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=255)),
-            ],
-            options={
-                'verbose_name': 'Company',
-                'verbose_name_plural': 'Companies',
             },
             bases=(models.Model,),
         ),
@@ -73,8 +63,9 @@ class Migration(migrations.Migration):
             name='RoadRoute',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('company', models.IntegerField()),
                 ('geom', django.contrib.gis.db.models.fields.LineStringField(srid=4674)),
-                ('company', models.ForeignKey(to='routes.Company')),
+                ('creation_date', models.DateTimeField(auto_now_add=True)),
             ],
             options={
                 'verbose_name': 'Road Route',
@@ -95,21 +86,9 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.AddField(
-            model_name='company',
+            model_name='roadroute',
             name='states',
             field=models.ManyToManyField(to='routes.State'),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='company',
-            name='users',
-            field=models.ManyToManyField(to=settings.AUTH_USER_MODEL),
-            preserve_default=True,
-        ),
-        migrations.AddField(
-            model_name='aquaticroute',
-            name='company',
-            field=models.ForeignKey(to='routes.Company'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -125,9 +104,9 @@ class Migration(migrations.Migration):
             preserve_default=True,
         ),
         migrations.AddField(
-            model_name='aerialroute',
-            name='company',
-            field=models.ForeignKey(to='routes.Company'),
+            model_name='aquaticroute',
+            name='states',
+            field=models.ManyToManyField(to='routes.State'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -140,6 +119,12 @@ class Migration(migrations.Migration):
             model_name='aerialroute',
             name='origin',
             field=models.ForeignKey(related_name='route_origin', to='routes.Airport'),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='aerialroute',
+            name='states',
+            field=models.ManyToManyField(to='routes.State'),
             preserve_default=True,
         ),
     ]

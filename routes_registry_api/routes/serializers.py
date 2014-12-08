@@ -2,15 +2,8 @@
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.serializers import ModelSerializer, Field
 
-from .models import State, Company, Port, Airport
+from .models import State, Port, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
-
-
-class CompanySerializer(ModelSerializer):
-
-    class Meta:
-        model = Company
-        fields = ('id', 'name', 'states')
 
 
 class StateSerializer(GeoFeatureModelSerializer):
@@ -42,16 +35,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = RoadRoute
         geo_field = 'geom'
-        fields = ('id', 'company', 'creation_date')
-
-
-class RoadRouteListSerializer(ModelSerializer):
-    '''A serializer without geo_field made only to return a list of RoadRoutes
-    of each company'''
-
-    class Meta:
-        model = RoadRoute
-        fields = ('id', 'creation_date')
+        fields = ('id', 'company', 'states', 'creation_date')
 
 
 class AerialRouteSerializer(ModelSerializer):
@@ -59,7 +43,7 @@ class AerialRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AerialRoute
-        fields = ('id', 'company', 'origin', 'destination', 'route',
+        fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
             'creation_date')
 
 
@@ -68,5 +52,5 @@ class AquaticRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AquaticRoute
-        fields = ('id', 'company', 'origin', 'destination', 'route',
+        fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
             'creation_date')
