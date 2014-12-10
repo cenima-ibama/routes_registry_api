@@ -94,25 +94,29 @@ class TestRoadRouteAPI(APITestCase):
         url = reverse('api:road-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data['properties']['valid'])
+
 
         url = reverse('api:road-route-geojson-detail', args=[1])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    #def test_invalid_road_route_creation(self):
-        #data = {
-            #'states': [self.state1.id, self.state2.id],
-            #'geom': {
-                #"type": "LineString",
-                #"coordinates": [[0.5, 0.5], [2, 2]]
-                #}
-            #}
+    def test_invalid_road_route_creation(self):
+        data = {
+            'states': [self.state1.id, self.state2.id],
+            'company': 1,
+            'geom': {
+                "type": "LineString",
+                "coordinates": [[0.5, 0.5], [2, 2]]
+                }
+            }
 
-        #url = reverse('api:road-route-list')
-        #self.client.login(username=self.user.username, password='password')
-        #with self.assertRaises(ValidationError):
-            #self.client.post(url, data, format='json')
-        #self.assertEqual(RoadRoute.objects.all().count(), 0)
+        url = reverse('api:road-route-list')
+        self.client.login(username=self.user.username, password='password')
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.data['properties']['valid'])
+        self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 
 class TestAerialRouteAPI(APITestCase):

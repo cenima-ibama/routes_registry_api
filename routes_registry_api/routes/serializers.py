@@ -31,11 +31,12 @@ class AirportSerializer(GeoFeatureModelSerializer):
 
 
 class RoadRouteSerializer(GeoFeatureModelSerializer):
+    valid = Field(source='valid')
 
     class Meta:
         model = RoadRoute
         geo_field = 'geom'
-        fields = ('id', 'company', 'states', 'creation_date')
+        fields = ('id', 'company', 'states', 'creation_date', 'valid')
 
 
 class AerialRouteSerializer(ModelSerializer):

@@ -32,14 +32,7 @@ class TestRoadRoute(TestCase):
         self.state2.roadroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-
-        #with self.assertRaises(ValidationError):
-            #RoadRoute.objects.create(
-                #geom=LineString([0.5, 0.5], [2, 2]),
-                #states=State.objects.all(),
-                #company=1
-                #)
-
+        self.assertTrue(valid_route.valid())
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 
