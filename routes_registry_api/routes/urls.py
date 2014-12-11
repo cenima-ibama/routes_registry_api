@@ -13,7 +13,7 @@ from .views import AquaticRouteOrigin, AquaticRouteDestination
 
 
 urlpatterns = patterns('',
-    url(r'^state/(?P<pk>[0-9]+)/$',
+    url(r'^state/(?P<code>\w+)/$',
         StateDetail.as_view(),
         name='state-detail'),
     url(r'^ports/$',

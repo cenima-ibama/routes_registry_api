@@ -16,6 +16,7 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
     model = State
     serializer_class = StateSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    lookup_field = 'code'
 
 
 class PortList(ListCreateAPIView):

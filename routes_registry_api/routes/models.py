@@ -11,7 +11,7 @@ class State(models.Model):
     objects = models.GeoManager()
 
     def __str__(self):
-        return '%s' % self.name
+        return '%s' % self.code
 
 
 class Port(models.Model):
@@ -48,8 +48,11 @@ class RoadRoute(models.Model):
         return '%s' % self.id
 
     def valid(self):
-        if self.geom.within(self.states.unionagg()):
-            return True
+        if self.states.count() > 0:
+            if self.geom.within(self.states.unionagg()):
+                return True
+            else:
+                return False
         else:
             return False
 

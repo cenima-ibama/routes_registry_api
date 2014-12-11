@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString, Point
-from django.core.exceptions import ValidationError
 
 from ..models import State, Port, Airport
 from ..models import RoadRoute, AerialRoute, AquaticRoute
@@ -19,7 +18,7 @@ class TestRoadRoute(TestCase):
         self.state2.save()
 
     def test_state_creation(self):
-        self.assertEqual(self.state1.__str__(), 'State One')
+        self.assertEqual(self.state1.__str__(), '01')
         self.assertEqual(State.objects.all().count(), 2)
 
     def test_road_route_creation(self):
@@ -33,6 +32,19 @@ class TestRoadRoute(TestCase):
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
         self.assertTrue(valid_route.valid())
+        self.assertEqual(RoadRoute.objects.all().count(), 1)
+
+    def test_invalid_road_route_creation(self):
+        invalid_route = RoadRoute(
+            geom=LineString([0.5, 0.5], [2, 2]),
+            company=1
+            )
+        invalid_route.save()
+        self.state1.roadroute_set.add(invalid_route)
+        self.state2.roadroute_set.add(invalid_route)
+
+        self.assertEqual(invalid_route.__str__(), '%s' % invalid_route.id)
+        self.assertFalse(invalid_route.valid())
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 

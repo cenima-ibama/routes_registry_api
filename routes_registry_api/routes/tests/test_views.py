@@ -26,7 +26,7 @@ class TestStateAPI(APITestCase):
         poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
         state = State(name='State One', code='01', geom=MultiPolygon(poly1))
         state.save()
-        url = reverse('api:state-detail', args=[state.pk])
+        url = reverse('api:state-detail', args=[state.code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -61,7 +61,7 @@ class TestRoadRouteAPI(APITestCase):
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
 
         self.data = {
-            'states': [self.state1.id, self.state2.id],
+            'states': [self.state1.code, self.state2.code],
             'company': 1,
             'geom': {
                 "type": "LineString",
@@ -86,6 +86,7 @@ class TestRoadRouteAPI(APITestCase):
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RoadRoute.objects.all().count(), 1)
+        self.assertTrue(response.data['properties']['valid'])
 
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -94,7 +95,6 @@ class TestRoadRouteAPI(APITestCase):
         url = reverse('api:road-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data['properties']['valid'])
 
 
         url = reverse('api:road-route-geojson-detail', args=[1])
@@ -103,7 +103,7 @@ class TestRoadRouteAPI(APITestCase):
 
     def test_invalid_road_route_creation(self):
         data = {
-            'states': [self.state1.id, self.state2.id],
+            'states': [self.state1.code, self.state2.code],
             'company': 1,
             'geom': {
                 "type": "LineString",

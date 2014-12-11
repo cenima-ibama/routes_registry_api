@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
-from rest_framework.serializers import ModelSerializer, Field
+from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import Field, SlugRelatedField
 
 from .models import State, Port, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
@@ -32,6 +33,7 @@ class AirportSerializer(GeoFeatureModelSerializer):
 
 class RoadRouteSerializer(GeoFeatureModelSerializer):
     valid = Field(source='valid')
+    states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = RoadRoute
