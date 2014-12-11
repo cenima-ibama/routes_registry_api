@@ -2,7 +2,6 @@
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from rest_framework.test import APITestCase
@@ -86,7 +85,6 @@ class TestRoadRouteAPI(APITestCase):
         response = self.client.post(url, self.data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(RoadRoute.objects.all().count(), 1)
-        self.assertTrue(response.data['properties']['valid'])
 
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -95,7 +93,6 @@ class TestRoadRouteAPI(APITestCase):
         url = reverse('api:road-route-detail', args=[pk])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
 
         url = reverse('api:road-route-geojson-detail', args=[1])
         response = self.client.get(url, format='json')
@@ -114,9 +111,8 @@ class TestRoadRouteAPI(APITestCase):
         url = reverse('api:road-route-list')
         self.client.login(username=self.user.username, password='password')
         response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertFalse(response.data['properties']['valid'])
-        self.assertEqual(RoadRoute.objects.all().count(), 1)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(RoadRoute.objects.all().count(), 0)
 
 
 class TestAerialRouteAPI(APITestCase):

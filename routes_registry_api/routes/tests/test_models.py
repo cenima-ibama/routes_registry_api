@@ -31,7 +31,6 @@ class TestRoadRoute(TestCase):
         self.state2.roadroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertTrue(valid_route.valid())
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
     def test_invalid_road_route_creation(self):
@@ -44,7 +43,6 @@ class TestRoadRoute(TestCase):
         self.state2.roadroute_set.add(invalid_route)
 
         self.assertEqual(invalid_route.__str__(), '%s' % invalid_route.id)
-        self.assertFalse(invalid_route.valid())
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 

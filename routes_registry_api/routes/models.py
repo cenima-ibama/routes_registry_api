@@ -47,15 +47,6 @@ class RoadRoute(models.Model):
     def __str__(self):
         return '%s' % self.id
 
-    def valid(self):
-        if self.states.count() > 0:
-            if self.geom.within(self.states.unionagg()):
-                return True
-            else:
-                return False
-        else:
-            return False
-
     class Meta:
         verbose_name = _('Road Route')
         verbose_name_plural = _('Road Routes')
