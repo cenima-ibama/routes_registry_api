@@ -10,6 +10,7 @@ from .models import RoadRoute, AerialRoute, AquaticRoute
 
 
 class StateSerializer(GeoFeatureModelSerializer):
+    """Serializer to the State model"""
 
     class Meta:
         model = State
@@ -18,6 +19,7 @@ class StateSerializer(GeoFeatureModelSerializer):
 
 
 class PortSerializer(GeoFeatureModelSerializer):
+    """Serializer to the Port model"""
 
     class Meta:
         model = Port
@@ -26,6 +28,7 @@ class PortSerializer(GeoFeatureModelSerializer):
 
 
 class AirportSerializer(GeoFeatureModelSerializer):
+    """Serializer to the Airport model"""
 
     class Meta:
         model = Airport
@@ -34,6 +37,9 @@ class AirportSerializer(GeoFeatureModelSerializer):
 
 
 class RoadRouteSerializer(GeoFeatureModelSerializer):
+    """Serializer to the Road Route model. Only accept route creation if the
+    states field is not empty and if the route is within the states geometry."""
+
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
@@ -54,6 +60,10 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
 
 
 class AerialRouteSerializer(ModelSerializer):
+    """Serializer to the Road Route model. Only accept route creation if the
+    states field is not empty and if both the origin and destination airports
+    is within the states geometry."""
+
     route = Field(source='route')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
@@ -78,6 +88,10 @@ class AerialRouteSerializer(ModelSerializer):
 
 
 class AquaticRouteSerializer(ModelSerializer):
+    """Serializer to the Road Route model. Only accept route creation if the
+    states field is not empty and if both the origin and destination airports
+    is within the states geometry."""
+
     route = Field(source='route')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
