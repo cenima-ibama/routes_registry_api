@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString, Point
+from django.core.exceptions import ValidationError
 
 from ..models import State, Port, Airport
 from ..models import RoadRoute, AerialRoute, AquaticRoute
@@ -67,6 +68,13 @@ class TestAerialRoute(TestCase):
         self.assertEqual(valid_route.route(),
             '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
             )
+
+        with self.assertRaises(ValidationError):
+            AerialRoute.objects.create(company=1,
+                origin=self.airport_a,
+                destination=self.airport_a
+            )
+
         self.assertEqual(AerialRoute.objects.all().count(), 1)
 
 
@@ -103,4 +111,11 @@ class TestAquaticRoute(TestCase):
         self.assertEqual(valid_route.route(),
             '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
             )
+
+        with self.assertRaises(ValidationError):
+            AquaticRoute.objects.create(company=1,
+                origin=self.port_a,
+                destination=self.port_a,
+            )
+
         self.assertEqual(AquaticRoute.objects.all().count(), 1)

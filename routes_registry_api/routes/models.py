@@ -70,12 +70,17 @@ class AerialRoute(models.Model):
     def route(self):
         return '%s - %s' % (self.origin.name, self.destination.name)
 
-    def valid(self):
-        if (self.origin.geom.within(self.states.unionagg()) and
-            self.destination.geom.within(self.states.unionagg())):
-            return True
-        else:
-            return False
+    def clean(self):
+        self.clean_fields()
+
+        if self.origin == self.destination:
+            raise ValidationError(
+                _('The destination airport must be different from the origin.')
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(AerialRoute, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('Aerial Route')
@@ -100,12 +105,17 @@ class AquaticRoute(models.Model):
     def route(self):
         return '%s - %s' % (self.origin.name, self.destination.name)
 
-    def valid(self):
-        if (self.origin.geom.within(self.states.unionagg()) and
-            self.destination.geom.within(self.states.unionagg())):
-            return True
-        else:
-            return False
+    def clean(self):
+        self.clean_fields()
+
+        if self.origin == self.destination:
+            raise ValidationError(
+                _('The destination port must be different from the origin.')
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(AquaticRoute, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('Aquatic Route')
