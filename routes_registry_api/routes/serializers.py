@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from django.utils.translation import ugettext, ugettext_lazy as _
-from django.contrib.gis.geos import GEOSGeometry
 
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework.serializers import ModelSerializer, ValidationError
@@ -45,27 +44,58 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     def validate(self, attrs):
         if len(attrs['states']) > 0:
             states = State.objects.filter(code__in=attrs['states']).unionagg()
-            if GEOSGeometry(attrs['geom']).within(states) is False:
-                raise ValidationError(_('Routes is not within the allowed states.'))
+            if attrs['geom'].within(states) is False:
+                raise ValidationError(_('Route is not within the allowed states.'))
             else:
                 return attrs
         else:
             raise ValidationError(_('States field can not be empty.'))
+        return attrs
 
 
 class AerialRouteSerializer(ModelSerializer):
     route = Field(source='route')
+    states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AerialRoute
         fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
             'creation_date')
 
+    def validate(self, attrs):
+        if len(attrs['states']) > 0:
+            states = State.objects.filter(code__in=attrs['states']).unionagg()
+            origin = attrs['origin'].geom
+            destination = attrs['destination'].geom
+            if origin.within(states) and destination.within(states) is False:
+                raise ValidationError(
+                    _('Origin or Destination is not within the allowed states.')
+                    )
+            else:
+                return attrs
+        else:
+            raise ValidationError(_('States field can not be empty.'))
+
 
 class AquaticRouteSerializer(ModelSerializer):
     route = Field(source='route')
+    states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AquaticRoute
         fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
             'creation_date')
+
+    def validate(self, attrs):
+        if len(attrs['states']) > 0:
+            states = State.objects.filter(code__in=attrs['states']).unionagg()
+            origin = attrs['origin'].geom
+            destination = attrs['destination'].geom
+            if origin.within(states) and destination.within(states) is False:
+                raise ValidationError(
+                    _('Origin or Destination is not within the allowed states.')
+                    )
+            else:
+                return attrs
+        else:
+            raise ValidationError(_('States field can not be empty.'))

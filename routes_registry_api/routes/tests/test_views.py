@@ -50,11 +50,11 @@ class TestRoadRouteAPI(APITestCase):
 
     def setUp(self):
         poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        self.state1 = State(name='One', code='01', geom=MultiPolygon(poly1))
         self.state1.save()
 
         poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
+        self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
         self.state2.save()
 
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
@@ -119,11 +119,11 @@ class TestAerialRouteAPI(APITestCase):
 
     def setUp(self):
         poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        self.state1 = State(name='One', code='01', geom=MultiPolygon(poly1))
         self.state1.save()
 
         poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
+        self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
         self.state2.save()
 
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
@@ -140,6 +140,13 @@ class TestAerialRouteAPI(APITestCase):
             'geom': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
+                }
+            }
+        self.airport_c = {
+            'name': "Airport c",
+            'geom': {
+                "type": "Point",
+                "coordinates": [2, -2]
                 }
             }
 
@@ -166,7 +173,7 @@ class TestAerialRouteAPI(APITestCase):
 
         id_a, id_b = [airport.id for airport in Airport.objects.all()]
         aerial_route = {
-            'states': [self.state1.id, self.state2.id],
+            'states': [self.state1.code, self.state2.code],
             'company': 1,
             'origin': id_a,
             'destination': id_b
@@ -188,16 +195,38 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_invalid_aerial_route_creation(self):
+        url = reverse('api:airport-list')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.airport_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.airport_c, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        id_a, id_c = [airport.id for airport in Airport.objects.all()]
+        aerial_route = {
+            'states': [self.state1.code, self.state2.code],
+            'company': 1,
+            'origin': id_a,
+            'destination': id_c
+            }
+        url = reverse('api:aerial-route-list')
+        response = self.client.post(url, aerial_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(AerialRoute.objects.all().count(), 0)
+
 
 class TestAquaticRouteAPI(APITestCase):
 
     def setUp(self):
         poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
+        self.state1 = State(name='One', code='01', geom=MultiPolygon(poly1))
         self.state1.save()
 
         poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
+        self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
         self.state2.save()
 
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
@@ -214,6 +243,13 @@ class TestAquaticRouteAPI(APITestCase):
             'geom': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
+                }
+            }
+        self.port_c = {
+            'name': "Port C",
+            'geom': {
+                "type": "Point",
+                "coordinates": [2, -2]
                 }
             }
 
@@ -240,7 +276,7 @@ class TestAquaticRouteAPI(APITestCase):
 
         id_a, id_b = [port.id for port in Port.objects.all()]
         aquatic_route = {
-            'states': [self.state1.id, self.state2.id],
+            'states': [self.state1.code, self.state2.code],
             'company': 1,
             'origin': id_a,
             'destination': id_b
@@ -261,3 +297,24 @@ class TestAquaticRouteAPI(APITestCase):
         url = reverse('api:aquatic-route-destination', args=[id_a])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_invalid_aquatic_route_creation(self):
+        url = reverse('api:port-list')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.port_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.port_c, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        id_a, id_c = [port.id for port in Port.objects.all()]
+        aquatic_route = {
+            'states': [self.state1.code, self.state2.code],
+            'company': 1,
+            'origin': id_a,
+            'destination': id_c
+            }
+        url = reverse('api:aquatic-route-list')
+        response = self.client.post(url, aquatic_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

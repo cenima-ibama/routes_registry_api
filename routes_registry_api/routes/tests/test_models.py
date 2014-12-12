@@ -33,18 +33,6 @@ class TestRoadRoute(TestCase):
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
-    def test_invalid_road_route_creation(self):
-        invalid_route = RoadRoute(
-            geom=LineString([0.5, 0.5], [2, 2]),
-            company=1
-            )
-        invalid_route.save()
-        self.state1.roadroute_set.add(invalid_route)
-        self.state2.roadroute_set.add(invalid_route)
-
-        self.assertEqual(invalid_route.__str__(), '%s' % invalid_route.id)
-        self.assertEqual(RoadRoute.objects.all().count(), 1)
-
 
 class TestAerialRoute(TestCase):
 
@@ -79,24 +67,6 @@ class TestAerialRoute(TestCase):
         self.assertEqual(valid_route.route(),
             '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
             )
-        self.assertTrue(valid_route.valid())
-
-        #with self.assertRaises(ValidationError):
-            #AerialRoute.objects.create(
-                #origin=self.airport_a,
-                #destination=self.airport_c,
-                #states=State.objects.all(),
-                #company=1
-                #)
-
-        #with self.assertRaises(ValidationError):
-            #AerialRoute.objects.create(
-                #origin=self.airport_a,
-                #destination=self.airport_a,
-                #states=State.objects.all(),
-                #company=1
-                #)
-
         self.assertEqual(AerialRoute.objects.all().count(), 1)
 
 
@@ -133,21 +103,4 @@ class TestAquaticRoute(TestCase):
         self.assertEqual(valid_route.route(),
             '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
             )
-
-        #with self.assertRaises(ValidationError):
-            #AquaticRoute.objects.create(
-                #origin=self.port_a,
-                #destination=self.port_c,
-                #states=State.objects.all(),
-                #company=1
-                #)
-
-        #with self.assertRaises(ValidationError):
-            #AquaticRoute.objects.create(
-                #origin=self.port_a,
-                #destination=self.port_a,
-                #states=State.objects.all(),
-                #company=1
-                #)
-
         self.assertEqual(AquaticRoute.objects.all().count(), 1)
