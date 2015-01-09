@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
+from django_filters import FilterSet
+
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.filters import DjangoFilterBackend
+from rest_framework_gis.filters import InBBoxFilter
 
 from .serializers import StateSerializer, PortSerializer
 from .serializers import AirportSerializer
@@ -26,11 +30,22 @@ class PortList(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
+class AirportNameFilter(FilterSet):
+
+    class Meta:
+        model = Airport
+        fields = ['name']
+
+
 class AirportList(ListCreateAPIView):
     '''Create or list airports in geojson format'''
     model = Airport
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    bbox_filter_field = 'geom'
+    filter_backends = (InBBoxFilter, DjangoFilterBackend,)
+    bbox_filter_include_overlapping = True
+    filter_class = AirportNameFilter
 
 
 class RoadRouteList(ListCreateAPIView):

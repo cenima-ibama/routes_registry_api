@@ -40,10 +40,52 @@ class TestPortAPI(APITestCase):
 
 class TestAirportAPI(APITestCase):
 
-    def test_airport_list_response(self):
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+
+        self.airport_a = {
+            'name': "Airport A",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, 0.5]
+                }
+            }
+        self.airport_b = {
+            'name': "Airport B",
+            'geom': {
+                "type": "Point",
+                "coordinates": [0.5, -0.5]
+                }
+            }
+        self.airport_c = {
+            'name': "Airport C",
+            'geom': {
+                "type": "Point",
+                "coordinates": [2, -2]
+                }
+            }
+
+    def test_airport_creation(self):
         url = reverse('api:airport-list')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.airport_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.airport_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 2)
+
+        response = self.client.get(url, in_bbox='0.3,0.3,1,1', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 1)
+
+        response = self.client.get(url, name='Airport A', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 1)
 
 
 class TestRoadRouteAPI(APITestCase):
