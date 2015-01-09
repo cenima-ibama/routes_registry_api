@@ -10,7 +10,7 @@ from ...models import Airport
 
 class Command(BaseCommand):
     args = 'filename'
-    help = 'Import airports from a GeoJSON file'
+    help = 'Import airports from a GeoJSON file. The data needs to be in EPSG:4674'
 
     def handle(self, *args, **options):
         for filename in args:
@@ -22,7 +22,10 @@ class Command(BaseCommand):
                 if feature['properties'].get('name') is not None:
                     obj, created = Airport.objects.get_or_create(
                         name=feature['properties'].get('name'),
-                        geom=Point(feature['geometry'].get('coordinates'))
+                        geom=Point(
+                                feature['geometry'].get('coordinates'),
+                                srid=4674
+                                )
                         )
                     if created:
                         count += 1
