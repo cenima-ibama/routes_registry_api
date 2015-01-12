@@ -12,7 +12,7 @@ before_install:
   - sudo apt-get remove -y libgdal1
   - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
   - sudo apt-get update -y
-  - sudo apt-get install -y binutils libproj-dev gdal-bin
+  - sudo apt-get install -y binutils libproj-dev gdal-bin postgresql-9.3-postgis-2.1 postgis
 
 install:
   - "pip install -r requirements/local.txt --use-mirrors"
@@ -21,6 +21,7 @@ before_script:
   - psql -c 'create database routes_api_test;' -U postgres
   - psql -c 'CREATE EXTENSION postgis;' -U postgres -d routes_api_test
   - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d routes_api_test
-  - cd routes_registry_api/
 
-script: ./manage.py test --settings=routes_registry_api.settings.test
+script:
+  - cd routes_registry_api/
+  - ./manage.py test --settings=routes_registry_api.settings.test
