@@ -4,9 +4,9 @@ from .base import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'router_test',
-        'USER': 'casv',
-        'PASSWORD': 'casv',
+        'NAME': 'routes_api_test',
+        'USER': 'postgres',
+        'PASSWORD': '',
         'HOST': '',
         'PORT': '',
     }

@@ -1,0 +1,22 @@
+language: python
+python:
+  - "3.2"
+  - "3.4"
+
+addons:
+  postgresql: "9.3"
+
+before_install:
+  #geodjango dependencies
+  - sudo apt-get install binutils libproj-dev gdal-bin
+
+install:
+  - "pip install -r requirements/local.txt --use-mirrors"
+
+before_script:
+  - psql -c 'create database routes_api_test;' -U postgres
+  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d routes_api_test
+  - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d routes_api_test
+  - cd routes_registry_api/
+
+script: ./manage.py test --settings=routes_registry_api.settings.test
