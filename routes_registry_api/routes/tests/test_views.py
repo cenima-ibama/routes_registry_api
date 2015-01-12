@@ -53,33 +53,39 @@ class TestAirportAPI(APITestCase):
             'name': "Airport B",
             'geom': {
                 "type": "Point",
-                "coordinates": [0.5, -0.5]
+                "coordinates": [-0.5, -0.5]
                 }
             }
 
-    def test_airport_creation(self):
-        url = reverse('api:airport-list')
+        self.url = reverse('api:airport-list')
         self.client.login(username=self.user.username, password='password')
+        self.client.post(self.url, self.airport_a, format='json')
+        self.client.post(self.url, self.airport_b, format='json')
 
-        response = self.client.post(url, self.airport_a, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        response = self.client.post(url, self.airport_b, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        response = self.client.get(url, format='json')
+    def test_airport_creation(self):
+        response = self.client.get(self.url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 2)
 
-        response = self.client.get(url, {'in_bbox': '0,0,1,1'}, format='json')
+    def test_bbox_filter(self):
+
+        response = self.client.get(self.url, {'in_bbox': '0,0,1,1'},
+            format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
 
-        response = self.client.get(url, {'name': 'B'}, format='json')
+        response = self.client.get(self.url, {'in_bbox': '-1,-1,0,0'},
+            format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
 
-        response = self.client.get(url, {'name': 'airport'}, format='json')
+    def test_name_filter(self):
+
+        response = self.client.get(self.url, {'name': 'B'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 1)
+
+        response = self.client.get(self.url, {'name': 'airport'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 2)
 

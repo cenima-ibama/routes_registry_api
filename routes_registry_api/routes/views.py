@@ -31,6 +31,7 @@ class PortList(ListCreateAPIView):
 
 
 class AirportNameFilter(FilterSet):
+    '''Filter airports by name'''
     name = CharFilter(name='name', lookup_type='icontains')
 
     class Meta:
@@ -39,7 +40,8 @@ class AirportNameFilter(FilterSet):
 
 
 class AirportList(ListCreateAPIView):
-    '''Create or list airports in geojson format'''
+    '''Create or list airports in geojson format. It is possible to filter
+    by name or passing a bbox coordinates'''
     model = Airport
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
