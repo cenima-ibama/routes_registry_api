@@ -44,7 +44,6 @@ class AirportList(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     bbox_filter_field = 'geom'
     filter_backends = (InBBoxFilter, DjangoFilterBackend,)
-    bbox_filter_include_overlapping = True
     filter_class = AirportNameFilter
 
 

@@ -31,7 +31,6 @@ class TestStateAPI(APITestCase):
 
 
 class TestPortAPI(APITestCase):
-
     def test_port_list_response(self):
         url = reverse('api:port-list')
         response = self.client.get(url, format='json')
@@ -57,13 +56,6 @@ class TestAirportAPI(APITestCase):
                 "coordinates": [0.5, -0.5]
                 }
             }
-        self.airport_c = {
-            'name': "Airport C",
-            'geom': {
-                "type": "Point",
-                "coordinates": [2, -2]
-                }
-            }
 
     def test_airport_creation(self):
         url = reverse('api:airport-list')
@@ -79,11 +71,11 @@ class TestAirportAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 2)
 
-        response = self.client.get(url, in_bbox='0.3,0.3,1,1', format='json')
+        response = self.client.get(url, {'in_bbox': '0,0,1,1'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
 
-        response = self.client.get(url, name='Airport A', format='json')
+        response = self.client.get(url, {'name': 'Airport A'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
 
