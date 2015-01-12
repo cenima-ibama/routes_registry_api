@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django_filters import FilterSet
+from django_filters import FilterSet, CharFilter
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.generics import ListAPIView, ListCreateAPIView
@@ -31,6 +31,7 @@ class PortList(ListCreateAPIView):
 
 
 class AirportNameFilter(FilterSet):
+    name = CharFilter(name='name', lookup_type='icontains')
 
     class Meta:
         model = Airport

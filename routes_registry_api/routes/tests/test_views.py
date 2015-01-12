@@ -75,9 +75,13 @@ class TestAirportAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
 
-        response = self.client.get(url, {'name': 'Airport A'}, format='json')
+        response = self.client.get(url, {'name': 'B'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['features']), 1)
+
+        response = self.client.get(url, {'name': 'airport'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 2)
 
 
 class TestRoadRouteAPI(APITestCase):
