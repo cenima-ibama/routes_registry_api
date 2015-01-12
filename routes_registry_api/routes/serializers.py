@@ -56,7 +56,6 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
                 return attrs
         else:
             raise ValidationError(_('States field can not be empty.'))
-        return attrs
 
 
 class AerialRouteSerializer(ModelSerializer):

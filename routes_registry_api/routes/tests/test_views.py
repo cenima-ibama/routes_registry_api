@@ -152,9 +152,22 @@ class TestRoadRouteAPI(APITestCase):
                 }
             }
 
+        data_b = {
+            'states': [],
+            'company': 1,
+            'geom': {
+                "type": "LineString",
+                "coordinates": [[0.5, 0.5], [2, 2]]
+                }
+            }
+
         url = reverse('api:road-route-list')
         self.client.login(username=self.user.username, password='password')
+
         response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(url, data_b, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(RoadRoute.objects.all().count(), 0)
 
@@ -250,14 +263,26 @@ class TestAerialRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         id_a, id_c = [airport.id for airport in Airport.objects.all()]
+
         aerial_route = {
             'states': [self.state1.code, self.state2.code],
             'company': 1,
             'origin': id_a,
             'destination': id_c
             }
+
+        aerial_route_b = {
+            'states': [],
+            'company': 1,
+            'origin': id_a,
+            'destination': id_c
+            }
+
         url = reverse('api:aerial-route-list')
         response = self.client.post(url, aerial_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(url, aerial_route_b, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(AerialRoute.objects.all().count(), 0)
 
@@ -353,12 +378,25 @@ class TestAquaticRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         id_a, id_c = [port.id for port in Port.objects.all()]
+
         aquatic_route = {
             'states': [self.state1.code, self.state2.code],
             'company': 1,
             'origin': id_a,
             'destination': id_c
             }
+
+        aquatic_route_b = {
+            'states': [],
+            'company': 1,
+            'origin': id_a,
+            'destination': id_c
+            }
+
         url = reverse('api:aquatic-route-list')
         response = self.client.post(url, aquatic_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(url, aquatic_route_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(AquaticRoute.objects.all().count(), 0)
