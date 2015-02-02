@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.auth.models import User
-from django.test import TestCase
+
 
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -105,7 +106,7 @@ class TestRoadRouteAPI(APITestCase):
 
         self.data = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [0.5, -0.5]]
@@ -145,7 +146,7 @@ class TestRoadRouteAPI(APITestCase):
     def test_invalid_road_route_creation(self):
         data = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [2, 2]]
@@ -154,7 +155,7 @@ class TestRoadRouteAPI(APITestCase):
 
         data_b = {
             'states': [],
-            'company': 1,
+            'auth_code': 'jsh123',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [2, 2]]
@@ -231,7 +232,7 @@ class TestAerialRouteAPI(APITestCase):
         id_a, id_b = [airport.id for airport in Airport.objects.all()]
         aerial_route = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'origin': id_a,
             'destination': id_b
             }
@@ -266,23 +267,31 @@ class TestAerialRouteAPI(APITestCase):
 
         aerial_route = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'origin': id_a,
             'destination': id_c
             }
-
-        aerial_route_b = {
-            'states': [],
-            'company': 1,
-            'origin': id_a,
-            'destination': id_c
-            }
-
         url = reverse('api:aerial-route-list')
         response = self.client.post(url, aerial_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        aerial_route_b = {
+            'states': [],
+            'auth_code': '123a',
+            'origin': id_a,
+            'destination': id_c
+            }
         response = self.client.post(url, aerial_route_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(AerialRoute.objects.all().count(), 0)
+
+        aerial_route_c = {
+            'states': [],
+            'auth_code': '123a',
+            'origin': id_a,
+            'destination': id_a
+            }
+        response = self.client.post(url, aerial_route_c, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(AerialRoute.objects.all().count(), 0)
 
@@ -346,7 +355,7 @@ class TestAquaticRouteAPI(APITestCase):
         id_a, id_b = [port.id for port in Port.objects.all()]
         aquatic_route = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'origin': id_a,
             'destination': id_b
             }
@@ -381,22 +390,30 @@ class TestAquaticRouteAPI(APITestCase):
 
         aquatic_route = {
             'states': [self.state1.code, self.state2.code],
-            'company': 1,
+            'auth_code': '123abc',
             'origin': id_a,
             'destination': id_c
             }
-
-        aquatic_route_b = {
-            'states': [],
-            'company': 1,
-            'origin': id_a,
-            'destination': id_c
-            }
-
         url = reverse('api:aquatic-route-list')
         response = self.client.post(url, aquatic_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+        aquatic_route_b = {
+            'states': [],
+            'auth_code': '123a',
+            'origin': id_a,
+            'destination': id_c
+            }
         response = self.client.post(url, aquatic_route_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(AquaticRoute.objects.all().count(), 0)
+
+        aquatic_route_c = {
+            'states': [],
+            'auth_code': '123a',
+            'origin': id_a,
+            'destination': id_a
+            }
+        response = self.client.post(url, aquatic_route_c, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(AquaticRoute.objects.all().count(), 0)

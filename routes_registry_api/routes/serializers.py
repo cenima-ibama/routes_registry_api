@@ -45,7 +45,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = RoadRoute
         geo_field = 'geom'
-        fields = ('id', 'company', 'states', 'creation_date')
+        fields = ('id', 'auth_code', 'states', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:
@@ -68,7 +68,7 @@ class AerialRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AerialRoute
-        fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
+        fields = ('id', 'auth_code', 'states', 'origin', 'destination', 'route',
             'creation_date')
 
     def validate(self, attrs):
@@ -96,7 +96,7 @@ class AquaticRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AquaticRoute
-        fields = ('id', 'company', 'states', 'origin', 'destination', 'route',
+        fields = ('id', 'auth_code', 'states', 'origin', 'destination', 'route',
             'creation_date')
 
     def validate(self, attrs):

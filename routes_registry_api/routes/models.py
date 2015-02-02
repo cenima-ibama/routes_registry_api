@@ -35,10 +35,12 @@ class Airport(models.Model):
 
 
 class RoadRoute(models.Model):
-    """Every road route is associated with a company and must be within the
-    allowed states of that company."""
+    """Every road route is associated with one authorization code and must be
+    within the allowed states of that company.
+    """
 
-    company = models.IntegerField()
+    auth_code = models.CharField(_('Authorization Code'), max_length=40,
+        unique=True)
     states = models.ManyToManyField(State)
     geom = models.LineStringField(srid=4674)
     creation_date = models.DateTimeField(auto_now_add=True)
@@ -53,11 +55,13 @@ class RoadRoute(models.Model):
 
 
 class AerialRoute(models.Model):
-    """Every aerial route is associated with a company. The airports of origin
-    and destination must be differents and within the allowed states of
-    the company."""
+    """Every aerial route is associated with one authorization code. The
+    airports of origin and destination must be differents and within the
+    allowed states of the company.
+    """
 
-    company = models.IntegerField()
+    auth_code = models.CharField(_('Authorization Code'), max_length=40,
+        unique=True)
     states = models.ManyToManyField(State)
     origin = models.ForeignKey(Airport, related_name="route_origin")
     destination = models.ForeignKey(Airport, related_name="route_destination")
@@ -88,11 +92,13 @@ class AerialRoute(models.Model):
 
 
 class AquaticRoute(models.Model):
-    """Every aquatic route is associated with a company. The ports of origin
-    and destination must be differents and within the allowed states of
-    the company."""
+    """Every aquatic route is associated with one authorization code. The ports
+    of origin and destination must be differents and within the allowed states
+    of the company.
+    """
 
-    company = models.IntegerField()
+    auth_code = models.CharField(_('Authorization Code'), max_length=40,
+        unique=True)
     states = models.ManyToManyField(State)
     origin = models.ForeignKey(Port, related_name="route_origin")
     destination = models.ForeignKey(Port, related_name="route_destination")

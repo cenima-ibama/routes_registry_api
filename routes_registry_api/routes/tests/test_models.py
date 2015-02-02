@@ -2,6 +2,7 @@
 from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString, Point
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError, transaction
 
 from ..models import State, Port, Airport
 from ..models import RoadRoute, AerialRoute, AquaticRoute
@@ -25,13 +26,20 @@ class TestRoadRoute(TestCase):
     def test_road_route_creation(self):
         valid_route = RoadRoute(
             geom=LineString([0.5, 0.5], [0.5, -0.5]),
-            company=1
+            auth_code='123abc'
             )
         valid_route.save()
         self.state1.roadroute_set.add(valid_route)
         self.state2.roadroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
+
+        with self.assertRaises(IntegrityError):
+            with transaction.atomic():
+                RoadRoute.objects.create(auth_code='123abc',
+                    geom=LineString([0.5, 0.5], [0.5, -0.5])
+                    )
+
         self.assertEqual(RoadRoute.objects.all().count(), 1)
 
 
@@ -58,7 +66,7 @@ class TestAerialRoute(TestCase):
         valid_route = AerialRoute(
             origin=self.airport_a,
             destination=self.airport_b,
-            company=1
+            auth_code='123abc'
             )
         valid_route.save()
         self.state1.aerialroute_set.add(valid_route)
@@ -70,9 +78,15 @@ class TestAerialRoute(TestCase):
             )
 
         with self.assertRaises(ValidationError):
-            AerialRoute.objects.create(company=1,
+            AerialRoute.objects.create(auth_code='123a',
                 origin=self.airport_a,
                 destination=self.airport_a
+            )
+
+        with self.assertRaises(ValidationError):
+            AerialRoute.objects.create(auth_code='123abc',
+                origin=self.airport_a,
+                destination=self.airport_c
             )
 
         self.assertEqual(AerialRoute.objects.all().count(), 1)
@@ -101,7 +115,7 @@ class TestAquaticRoute(TestCase):
         valid_route = AquaticRoute(
             origin=self.port_a,
             destination=self.port_b,
-            company=1
+            auth_code='123abc'
             )
         valid_route.save()
         self.state1.aquaticroute_set.add(valid_route)
@@ -113,9 +127,15 @@ class TestAquaticRoute(TestCase):
             )
 
         with self.assertRaises(ValidationError):
-            AquaticRoute.objects.create(company=1,
+            AquaticRoute.objects.create(auth_code='123a',
                 origin=self.port_a,
                 destination=self.port_a,
+            )
+
+        with self.assertRaises(ValidationError):
+            AquaticRoute.objects.create(auth_code='123abc',
+                origin=self.port_a,
+                destination=self.port_c,
             )
 
         self.assertEqual(AquaticRoute.objects.all().count(), 1)
