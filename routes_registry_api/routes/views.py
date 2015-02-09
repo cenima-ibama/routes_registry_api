@@ -62,6 +62,7 @@ class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
     model = RoadRoute
     serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'auth_code'
 
 
 class RoadRouteGeoJSONDetail(ListAPIView):

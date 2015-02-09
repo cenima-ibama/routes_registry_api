@@ -134,12 +134,12 @@ class TestRoadRouteAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        pk = RoadRoute.objects.all()[0].pk
-        url = reverse('api:road-route-detail', args=[pk])
+        auth_code = RoadRoute.objects.all()[0].auth_code
+        url = reverse('api:road-route-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        url = reverse('api:road-route-geojson-detail', args=[1])
+        url = reverse('api:road-route-geojson-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
