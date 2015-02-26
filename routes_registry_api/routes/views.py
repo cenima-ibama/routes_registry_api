@@ -77,6 +77,7 @@ class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
     model = AerialRoute
     serializer_class = AerialRouteSerializer
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'auth_code'
 
 
 class AquaticRouteList(ListCreateAPIView):
@@ -91,3 +92,4 @@ class AquaticRouteDetail(RetrieveUpdateDestroyAPIView):
     model = AquaticRoute
     serializer_class = AquaticRouteSerializer
     permission_classes = (IsAuthenticated,)
+    lookup_field = 'auth_code'

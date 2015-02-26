@@ -235,8 +235,8 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.post(url, aerial_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        pk = AerialRoute.objects.all()[0].pk
-        url = reverse('api:aerial-route-detail', args=[pk])
+        auth_code = AerialRoute.objects.all()[0].auth_code
+        url = reverse('api:aerial-route-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -350,8 +350,8 @@ class TestAquaticRouteAPI(APITestCase):
         response = self.client.post(url, aquatic_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        pk = AquaticRoute.objects.all()[0].pk
-        url = reverse('api:aquatic-route-detail', args=[pk])
+        auth_code = AquaticRoute.objects.all()[0].auth_code
+        url = reverse('api:aquatic-route-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
