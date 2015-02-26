@@ -65,17 +65,6 @@ class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
     lookup_field = 'auth_code'
 
 
-class RoadRouteGeoJSONDetail(ListAPIView):
-    '''Detail of RoadRoutes in GeoJSON FeatureCollection format'''
-    model = RoadRoute
-    serializer_class = RoadRouteSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        queryset = super(RoadRouteGeoJSONDetail, self).get_queryset()
-        return queryset.filter(pk=self.kwargs.get('pk'))
-
-
 class AerialRouteList(ListCreateAPIView):
     '''Create or List AerialRoutes'''
     model = AerialRoute

@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.gis.geos import Polygon, MultiPolygon
 from django.contrib.auth.models import User
 
-
 from rest_framework.test import APITestCase
 from rest_framework import status
 
@@ -136,10 +135,6 @@ class TestRoadRouteAPI(APITestCase):
 
         auth_code = RoadRoute.objects.all()[0].auth_code
         url = reverse('api:road-route-detail', args=[auth_code])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        url = reverse('api:road-route-geojson-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

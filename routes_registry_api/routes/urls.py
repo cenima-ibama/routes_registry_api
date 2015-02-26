@@ -5,7 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import StateDetail
 from .views import PortList, AirportList
-from .views import RoadRouteList, RoadRouteDetail, RoadRouteGeoJSONDetail
+from .views import RoadRouteList, RoadRouteDetail
 from .views import AerialRouteList, AerialRouteDetail
 from .views import AquaticRouteList, AquaticRouteDetail
 
@@ -28,9 +28,6 @@ urlpatterns = patterns('',
     url(r'^road-routes/(?P<auth_code>\w+)/$',
         RoadRouteDetail.as_view(),
         name='road-route-detail'),
-    url(r'^road-routes/(?P<auth_code>\w+)/geojson/$',
-        RoadRouteGeoJSONDetail.as_view(),
-        name='road-route-geojson-detail'),
 
     ### aerial routes urls
     url(r'^aerial-routes/$',
