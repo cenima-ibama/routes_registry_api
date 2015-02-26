@@ -44,6 +44,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = RoadRoute
+        id_field = False
         geo_field = 'geom'
         fields = ('auth_code', 'states', 'creation_date')
 
@@ -68,6 +69,7 @@ class AerialRouteSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = AerialRoute
+        id_field = False
         geo_field = 'route'
         fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
 
@@ -96,6 +98,7 @@ class AquaticRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AquaticRoute
+        id_field = False
         geo_field = 'route'
         fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
 
