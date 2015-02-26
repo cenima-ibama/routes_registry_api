@@ -65,13 +65,16 @@ class AerialRouteSerializer(GeoFeatureModelSerializer):
     is within the states geometry."""
 
     route = Field(source='route')
+    origin_name = Field(source='origin.name')
+    destination_name = Field(source='destination.name')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AerialRoute
         id_field = False
         geo_field = 'route'
-        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
+        fields = ('auth_code', 'states', 'origin', 'destination', 'origin_name',
+            'destination_name', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:
@@ -94,13 +97,16 @@ class AquaticRouteSerializer(ModelSerializer):
     is within the states geometry."""
 
     route = Field(source='route')
+    origin_name = Field(source='origin.name')
+    destination_name = Field(source='destination.name')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AquaticRoute
         id_field = False
         geo_field = 'route'
-        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
+        fields = ('auth_code', 'states', 'origin', 'destination', 'origin_name',
+            'destination_name', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:
