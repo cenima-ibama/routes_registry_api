@@ -73,9 +73,8 @@ class TestAerialRoute(TestCase):
         self.state2.aerialroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(valid_route.route(),
-            '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
-            )
+
+        self.assertEqual(valid_route.route(), LineString([0.5, 0.5], [0.5,-0.5]))
 
         with self.assertRaises(ValidationError):
             AerialRoute.objects.create(auth_code='123a',
@@ -122,9 +121,8 @@ class TestAquaticRoute(TestCase):
         self.state2.aquaticroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
-        self.assertEqual(valid_route.route(),
-            '%s - %s' % (valid_route.origin.name, valid_route.destination.name)
-            )
+
+        self.assertEqual(valid_route.route(), LineString([0.5, 0.5], [0.5,-0.5]))
 
         with self.assertRaises(ValidationError):
             AquaticRoute.objects.create(auth_code='123a',

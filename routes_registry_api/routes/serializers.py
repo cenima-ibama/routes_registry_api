@@ -45,7 +45,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = RoadRoute
         geo_field = 'geom'
-        fields = ('id', 'auth_code', 'states', 'creation_date')
+        fields = ('auth_code', 'states', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:
@@ -58,7 +58,7 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
             raise ValidationError(_('States field can not be empty.'))
 
 
-class AerialRouteSerializer(ModelSerializer):
+class AerialRouteSerializer(GeoFeatureModelSerializer):
     """Serializer to the Road Route model. Only accept route creation if the
     states field is not empty and if both the origin and destination airports
     is within the states geometry."""
@@ -68,8 +68,8 @@ class AerialRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AerialRoute
-        fields = ('id', 'auth_code', 'states', 'origin', 'destination', 'route',
-            'creation_date')
+        geo_field = 'route'
+        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:
@@ -96,8 +96,8 @@ class AquaticRouteSerializer(ModelSerializer):
 
     class Meta:
         model = AquaticRoute
-        fields = ('id', 'auth_code', 'states', 'origin', 'destination', 'route',
-            'creation_date')
+        geo_field = 'route'
+        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:

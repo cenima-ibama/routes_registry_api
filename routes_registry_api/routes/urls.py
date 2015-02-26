@@ -7,9 +7,7 @@ from .views import StateDetail
 from .views import PortList, AirportList
 from .views import RoadRouteList, RoadRouteDetail, RoadRouteGeoJSONDetail
 from .views import AerialRouteList, AerialRouteDetail
-from .views import AerialRouteOrigin, AerialRouteDestination
 from .views import AquaticRouteList, AquaticRouteDetail
-from .views import AquaticRouteOrigin, AquaticRouteDestination
 
 
 urlpatterns = patterns('',
@@ -41,12 +39,6 @@ urlpatterns = patterns('',
     url(r'^aerial-routes/(?P<pk>[0-9]+)/$',
         AerialRouteDetail.as_view(),
         name='aerial-route-detail'),
-    url(r'^aerial-routes/(?P<pk>[0-9]+)/origin/$',
-        AerialRouteOrigin.as_view(),
-        name='aerial-route-origin'),
-    url(r'^aerial-routes/(?P<pk>[0-9]+)/destination/$',
-        AerialRouteDestination.as_view(),
-        name='aerial-route-destination'),
 
     ### aquatic routes urls
     url(r'^aquatic-routes/$',
@@ -55,12 +47,6 @@ urlpatterns = patterns('',
     url(r'^aquatic-routes/(?P<pk>[0-9]+)/$',
         AquaticRouteDetail.as_view(),
         name='aquatic-route-detail'),
-    url(r'^aquatic-routes/(?P<pk>[0-9]+)/origin/$',
-        AquaticRouteOrigin.as_view(),
-        name='aquatic-route-origin'),
-    url(r'^aquatic-routes/(?P<pk>[0-9]+)/destination/$',
-        AquaticRouteDestination.as_view(),
-        name='aquatic-route-destination'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

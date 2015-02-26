@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.gis.geos import LineString
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -72,7 +73,7 @@ class AerialRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return '%s - %s' % (self.origin.name, self.destination.name)
+        return LineString(self.origin.geom, self.destination.geom)
 
     def clean(self):
         self.clean_fields()
@@ -109,7 +110,7 @@ class AquaticRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return '%s - %s' % (self.origin.name, self.destination.name)
+        return LineString(self.origin.geom, self.destination.geom)
 
     def clean(self):
         self.clean_fields()

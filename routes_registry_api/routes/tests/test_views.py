@@ -245,14 +245,6 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        url = reverse('api:aerial-route-origin', args=[id_a])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        url = reverse('api:aerial-route-destination', args=[id_a])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
     def test_invalid_aerial_route_creation(self):
         url = reverse('api:airport-list')
         self.client.login(username=self.user.username, password='password')
@@ -365,14 +357,6 @@ class TestAquaticRouteAPI(APITestCase):
 
         pk = AquaticRoute.objects.all()[0].pk
         url = reverse('api:aquatic-route-detail', args=[pk])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        url = reverse('api:aquatic-route-origin', args=[id_a])
-        response = self.client.get(url, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        url = reverse('api:aquatic-route-destination', args=[id_a])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
