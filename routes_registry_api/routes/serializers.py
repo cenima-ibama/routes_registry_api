@@ -2,6 +2,7 @@
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from rest_framework_gis.fields import GeometryField
 from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework.serializers import Field, SlugRelatedField
 
@@ -64,7 +65,7 @@ class AerialRouteSerializer(GeoFeatureModelSerializer):
     states field is not empty and if both the origin and destination airports
     is within the states geometry."""
 
-    route = Field(source='route')
+    route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')
     destination_name = Field(source='destination.name')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
@@ -96,7 +97,7 @@ class AquaticRouteSerializer(ModelSerializer):
     states field is not empty and if both the origin and destination airports
     is within the states geometry."""
 
-    route = Field(source='route')
+    route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')
     destination_name = Field(source='destination.name')
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
