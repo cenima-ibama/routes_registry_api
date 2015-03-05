@@ -17,7 +17,7 @@ from .models import RoadRoute, AerialRoute, AquaticRoute
 
 class StateDetail(RetrieveUpdateDestroyAPIView):
     '''Detail of each state as a geojson feature format'''
-    model = State
+    queryset = State.objects.all()
     serializer_class = StateSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     lookup_field = 'code'
@@ -25,7 +25,7 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
 
 class PortList(ListCreateAPIView):
     '''Create or list all ports in geojson format'''
-    model = Port
+    queryset = Port.objects.all()
     serializer_class = PortSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
@@ -42,7 +42,7 @@ class AirportNameFilter(FilterSet):
 class AirportList(ListCreateAPIView):
     '''Create or list airports in geojson format. It is possible to filter
     by name or passing a bbox coordinates'''
-    model = Airport
+    queryset = Airport.objects.all()
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     bbox_filter_field = 'geom'
@@ -52,14 +52,14 @@ class AirportList(ListCreateAPIView):
 
 class RoadRouteList(ListCreateAPIView):
     '''Create RoadRoute or list in geojson format'''
-    model = RoadRoute
+    queryset = RoadRoute.objects.all()
     serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticated,)
 
 
 class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
     '''Detail of RoadRoutes'''
-    model = RoadRoute
+    queryset = RoadRoute.objects.all()
     serializer_class = RoadRouteSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = 'auth_code'
@@ -67,14 +67,14 @@ class RoadRouteDetail(RetrieveUpdateDestroyAPIView):
 
 class AerialRouteList(ListCreateAPIView):
     '''Create or List AerialRoutes'''
-    model = AerialRoute
+    queryset = AerialRoute.objects.all()
     serializer_class = AerialRouteSerializer
     permission_classes = (IsAuthenticated,)
 
 
 class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
     '''Detail of an AerialRoute'''
-    model = AerialRoute
+    queryset = AerialRoute.objects.all()
     serializer_class = AerialRouteSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = 'auth_code'
@@ -82,14 +82,14 @@ class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
 
 class AquaticRouteList(ListCreateAPIView):
     '''Create or list AquaticRoutes'''
-    model = AquaticRoute
+    queryset = AquaticRoute.objects.all()
     serializer_class = AquaticRouteSerializer
     permission_classes = (IsAuthenticated,)
 
 
 class AquaticRouteDetail(RetrieveUpdateDestroyAPIView):
     '''Detail of an AquaticRoute'''
-    model = AquaticRoute
+    queryset = AquaticRoute.objects.all()
     serializer_class = AquaticRouteSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = 'auth_code'
