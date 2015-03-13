@@ -15,6 +15,18 @@ class State(models.Model):
         return '%s' % self.code
 
 
+class City(models.Model):
+
+    name = models.CharField(max_length=100)
+    state = models.ForeignKey(State)
+    ibge_geocode = models.IntegerField()
+    geom = models.MultiPolygonField(srid=4674)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.name
+
+
 class Port(models.Model):
 
     name = models.CharField(max_length=255)
