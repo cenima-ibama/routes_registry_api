@@ -186,14 +186,6 @@ class TestRoadRouteAPI(APITestCase):
 class TestAerialRouteAPI(APITestCase):
 
     def setUp(self):
-        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='One', code='01', geom=MultiPolygon(poly1))
-        self.state1.save()
-
-        poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
-        self.state2.save()
-
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
 
         self.airport_a = {
@@ -241,7 +233,6 @@ class TestAerialRouteAPI(APITestCase):
 
         id_a, id_b = [airport.id for airport in Airport.objects.all()]
         aerial_route = {
-            'states': [self.state1.code, self.state2.code],
             'auth_code': '123abc',
             'origin': id_a,
             'destination': id_b
@@ -262,33 +253,9 @@ class TestAerialRouteAPI(APITestCase):
         response = self.client.post(url, self.airport_a, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.post(url, self.airport_c, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        id_a, id_c = [airport.id for airport in Airport.objects.all()]
-
-        aerial_route = {
-            'states': [self.state1.code, self.state2.code],
-            'auth_code': '123abc',
-            'origin': id_a,
-            'destination': id_c
-            }
-        url = reverse('api:aerial-route-list')
-        response = self.client.post(url, aerial_route, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        aerial_route_b = {
-            'states': [],
-            'auth_code': '123a',
-            'origin': id_a,
-            'destination': id_c
-            }
-        response = self.client.post(url, aerial_route_b, format='json')
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(AerialRoute.objects.all().count(), 0)
+        id_a = Airport.objects.all()[0].id
 
         aerial_route_c = {
-            'states': [],
             'auth_code': '123a',
             'origin': id_a,
             'destination': id_a

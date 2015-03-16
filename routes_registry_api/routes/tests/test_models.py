@@ -67,14 +67,6 @@ class TestRoadRoute(TestCase):
 class TestAerialRoute(TestCase):
 
     def setUp(self):
-        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='State One', code='01', geom=MultiPolygon(poly1))
-        self.state1.save()
-
-        poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
-        self.state2.save()
-
         self.airport_a = Airport.objects.create(name="A", geom=Point([0.5, 0.5]))
         self.airport_b = Airport.objects.create(name="B", geom=Point([0.5, -0.5]))
         self.airport_c = Airport.objects.create(name="C", geom=Point([2, 2]))
@@ -90,8 +82,6 @@ class TestAerialRoute(TestCase):
             auth_code='123abc'
             )
         valid_route.save()
-        self.state1.aerialroute_set.add(valid_route)
-        self.state2.aerialroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
 

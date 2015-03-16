@@ -11,7 +11,7 @@ from .models import RoadRoute, AerialRoute, AquaticRoute
 
 
 class StateSerializer(GeoFeatureModelSerializer):
-    """Serializer to the State model"""
+    """Serializer to the State model."""
 
     class Meta:
         model = State
@@ -20,7 +20,7 @@ class StateSerializer(GeoFeatureModelSerializer):
 
 
 class PortSerializer(GeoFeatureModelSerializer):
-    """Serializer to the Port model"""
+    """Serializer to the Port model."""
 
     class Meta:
         model = Port
@@ -29,7 +29,7 @@ class PortSerializer(GeoFeatureModelSerializer):
 
 
 class AirportSerializer(GeoFeatureModelSerializer):
-    """Serializer to the Airport model"""
+    """Serializer to the Airport model."""
 
     class Meta:
         model = Airport
@@ -39,7 +39,8 @@ class AirportSerializer(GeoFeatureModelSerializer):
 
 class RoadRouteSerializer(GeoFeatureModelSerializer):
     """Serializer to the Road Route model. Only accept route creation if the
-    states field is not empty and if the route is within the states geometry."""
+    states field is not empty and if the route is within the states geometry.
+    """
 
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
     origin = Field(source='origin.__str__')
@@ -64,41 +65,27 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
 
 
 class AerialRouteSerializer(GeoFeatureModelSerializer):
-    """Serializer to the Road Route model. Only accept route creation if the
-    states field is not empty and if both the origin and destination airports
-    is within the states geometry."""
+    """Serializer to the Aerial Route model. Furthermore the model fields, it
+    includes the name of the origin and destination airports.
+    """
 
     route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')
     destination_name = Field(source='destination.name')
-    states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AerialRoute
         id_field = False
         geo_field = 'route'
-        fields = ('auth_code', 'states', 'origin', 'destination', 'origin_name',
+        fields = ('auth_code', 'origin', 'destination', 'origin_name',
             'destination_name', 'creation_date')
-
-    def validate(self, attrs):
-        if len(attrs['states']) > 0:
-            states = State.objects.filter(code__in=attrs['states']).unionagg()
-            origin = attrs['origin'].geom
-            destination = attrs['destination'].geom
-            if origin.within(states) and destination.within(states) is False:
-                raise ValidationError(
-                    _('Origin or Destination is not within the allowed states.')
-                    )
-            else:
-                return attrs
-        else:
-            raise ValidationError(_('States field can not be empty.'))
 
 
 class AquaticRouteSerializer(ModelSerializer):
-    """Serializer to the Road Route model. Only accept route creation if the
+    """Serializer to the Aquatic Route model. Only accept route creation if the
     states field is not empty and if both the origin and destination airports
-    is within the states geometry."""
+    is within the states geometry.
+    """
 
     route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')

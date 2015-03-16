@@ -80,13 +80,11 @@ class RoadRoute(models.Model):
 
 class AerialRoute(models.Model):
     """Every aerial route is associated with one authorization code. The
-    airports of origin and destination must be differents and within the
-    allowed states of the company.
+    airports of origin and destination must be distincts.
     """
 
     auth_code = models.CharField(_('Authorization Code'), max_length=40,
         unique=True)
-    states = models.ManyToManyField(State)
     origin = models.ForeignKey(Airport, related_name="route_origin")
     destination = models.ForeignKey(Airport, related_name="route_destination")
     creation_date = models.DateTimeField(auto_now_add=True)
