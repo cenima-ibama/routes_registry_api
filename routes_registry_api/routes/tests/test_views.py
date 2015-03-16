@@ -118,6 +118,7 @@ class TestRoadRouteAPI(APITestCase):
         self.data = {
             'states': [self.state1.code, self.state2.code],
             'auth_code': '123abc',
+            'roads': 'BR-101; BA-001',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [0.5, -0.5]]
@@ -154,6 +155,7 @@ class TestRoadRouteAPI(APITestCase):
         data = {
             'states': [self.state1.code, self.state2.code],
             'auth_code': '123abc',
+            'roads': 'BR-101; BA-001',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [2, 2]]
@@ -163,6 +165,7 @@ class TestRoadRouteAPI(APITestCase):
         data_b = {
             'states': [],
             'auth_code': 'jsh123',
+            'roads': 'BR-101; BA-001',
             'geom': {
                 "type": "LineString",
                 "coordinates": [[0.5, 0.5], [2, 2]]

@@ -61,6 +61,7 @@ class RoadRoute(models.Model):
         related_name='roadroute_origin')
     destination = models.ForeignKey(City, blank=True,
         related_name='roadroute_destination')
+    roads = models.CharField(max_length=255)
     objects = models.GeoManager()
 
     def __str__(self):

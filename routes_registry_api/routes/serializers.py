@@ -49,7 +49,8 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
         model = RoadRoute
         id_field = False
         geo_field = 'geom'
-        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
+        fields = ('auth_code', 'states', 'roads', 'origin', 'destination',
+            'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:

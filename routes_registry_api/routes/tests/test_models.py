@@ -43,7 +43,8 @@ class TestRoadRoute(TestCase):
     def test_road_route_creation(self):
         valid_route = RoadRoute(
             geom=LineString([0.1, 0.1], [0.1, -0.1]),
-            auth_code='123abc'
+            auth_code='123abc',
+            roads='BR-101; BA-001'
             )
         valid_route.save()
         self.state1.roadroute_set.add(valid_route)
@@ -56,6 +57,7 @@ class TestRoadRoute(TestCase):
         with self.assertRaises(ValidationError):
             with transaction.atomic():
                 RoadRoute.objects.create(auth_code='123abc',
+                    roads='BR-101; BA-001',
                     geom=LineString([0.5, 0.5], [0.5, -0.5])
                     )
 
