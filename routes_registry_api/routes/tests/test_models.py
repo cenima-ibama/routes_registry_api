@@ -5,7 +5,7 @@ from django.contrib.gis.geos import Point, MultiPoint
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 
-from ..models import State, Port, Airport
+from ..models import State, City, Port, Airport
 from ..models import RoadRoute, AerialRoute, AquaticRoute
 
 
@@ -20,13 +20,29 @@ class TestRoadRoute(TestCase):
         self.state2 = State(name='State Two', code='02', geom=MultiPolygon(poly2))
         self.state2.save()
 
+        poly3 = Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]])
+        self.city1 = City(name='City One', ibge_geocode=1, state=self.state1,
+            geom=MultiPolygon(poly3)
+            )
+        self.city1.save()
+
+        poly4 = Polygon([[0, 0], [0, -0.6], [0.6, -0.6], [0.6, 0], [0, 0]])
+        self.city2 = City(name='City Two', ibge_geocode=2, state=self.state2,
+            geom=MultiPolygon(poly4)
+            )
+        self.city2.save()
+
     def test_state_creation(self):
         self.assertEqual(self.state1.__str__(), '01')
         self.assertEqual(State.objects.all().count(), 2)
 
+    def test_city_creation(self):
+        self.assertEqual(self.city1.__str__(), 'City One - 01')
+        self.assertEqual(City.objects.all().count(), 2)
+
     def test_road_route_creation(self):
         valid_route = RoadRoute(
-            geom=LineString([0.5, 0.5], [0.5, -0.5]),
+            geom=LineString([0.1, 0.1], [0.1, -0.1]),
             auth_code='123abc'
             )
         valid_route.save()
@@ -34,8 +50,10 @@ class TestRoadRoute(TestCase):
         self.state2.roadroute_set.add(valid_route)
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
+        self.assertEqual(valid_route.origin, self.city1)
+        self.assertEqual(valid_route.destination, self.city2)
 
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             with transaction.atomic():
                 RoadRoute.objects.create(auth_code='123abc',
                     geom=LineString([0.5, 0.5], [0.5, -0.5])

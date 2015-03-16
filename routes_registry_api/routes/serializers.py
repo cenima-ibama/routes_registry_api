@@ -42,12 +42,14 @@ class RoadRouteSerializer(GeoFeatureModelSerializer):
     states field is not empty and if the route is within the states geometry."""
 
     states = SlugRelatedField(many=True, read_only=False, slug_field='code')
+    origin = Field(source='origin.__str__')
+    destination = Field(source='destination.__str__')
 
     class Meta:
         model = RoadRoute
         id_field = False
         geo_field = 'geom'
-        fields = ('auth_code', 'states', 'creation_date')
+        fields = ('auth_code', 'states', 'origin', 'destination', 'creation_date')
 
     def validate(self, attrs):
         if len(attrs['states']) > 0:

@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import MultiPoint
+from django.contrib.gis.geos import Point, MultiPoint
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -24,7 +24,7 @@ class City(models.Model):
     objects = models.GeoManager()
 
     def __str__(self):
-        return '%s' % self.name
+        return '%s - %s' % (self.name, self.state.code)
 
 
 class Port(models.Model):
@@ -57,10 +57,20 @@ class RoadRoute(models.Model):
     states = models.ManyToManyField(State)
     geom = models.LineStringField(srid=4674)
     creation_date = models.DateTimeField(auto_now_add=True)
+    origin = models.ForeignKey(City, blank=True,
+        related_name='roadroute_origin')
+    destination = models.ForeignKey(City, blank=True,
+        related_name='roadroute_destination')
     objects = models.GeoManager()
 
     def __str__(self):
         return '%s' % self.id
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        self.origin = City.objects.get(geom__contains=Point(self.geom[0]))
+        self.destination = City.objects.get(geom__contains=Point(self.geom[-1]))
+        super(RoadRoute, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('Road Route')

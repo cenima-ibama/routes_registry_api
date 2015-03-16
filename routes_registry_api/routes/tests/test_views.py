@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from ..models import State, Airport, Port
+from ..models import State,City, Airport, Port
 from ..models import RoadRoute, AerialRoute, AquaticRoute
 
 
@@ -100,6 +100,18 @@ class TestRoadRouteAPI(APITestCase):
         poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
         self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
         self.state2.save()
+
+        poly3 = Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]])
+        self.city1 = City(name='City One', ibge_geocode=1, state=self.state1,
+            geom=MultiPolygon(poly3)
+            )
+        self.city1.save()
+
+        poly4 = Polygon([[0, 0], [0, -0.6], [0.6, -0.6], [0.6, 0], [0, 0]])
+        self.city2 = City(name='City Two', ibge_geocode=2, state=self.state2,
+            geom=MultiPolygon(poly4)
+            )
+        self.city2.save()
 
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
 
