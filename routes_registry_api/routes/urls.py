@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views import StateDetail
-from .views import PortList, AirportList
+from .views import ShippingPlaceList, AirportList
 from .views import RoadRouteList, RoadRouteDetail
 from .views import AerialRouteList, AerialRouteDetail
 from .views import AquaticRouteList, AquaticRouteDetail
@@ -14,9 +14,9 @@ urlpatterns = patterns('',
     url(r'^state/(?P<code>\w+)/$',
         StateDetail.as_view(),
         name='state-detail'),
-    url(r'^ports/$',
-        PortList.as_view(),
-        name='port-list'),
+    url(r'^shipping-place/$',
+        ShippingPlaceList.as_view(),
+        name='shipping-place-list'),
     url(r'^airports/$',
         AirportList.as_view(),
         name='airport-list'),

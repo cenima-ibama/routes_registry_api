@@ -6,7 +6,7 @@ from rest_framework_gis.fields import GeometryField
 from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework.serializers import Field, SlugRelatedField
 
-from .models import State, Port, Airport
+from .models import State, ShippingPlace, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
 
 
@@ -19,12 +19,12 @@ class StateSerializer(GeoFeatureModelSerializer):
         fields = ('id', 'code', 'name')
 
 
-class PortSerializer(GeoFeatureModelSerializer):
+class ShippingPlaceSerializer(GeoFeatureModelSerializer):
     """Serializer to the Port model."""
 
     class Meta:
-        model = Port
-        geo_field = 'geom'
+        model = ShippingPlace
+        geo_field = 'point'
         fields = ('id', 'name')
 
 
@@ -90,25 +90,10 @@ class AquaticRouteSerializer(ModelSerializer):
     route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')
     destination_name = Field(source='destination.name')
-    states = SlugRelatedField(many=True, read_only=False, slug_field='code')
 
     class Meta:
         model = AquaticRoute
         id_field = False
         geo_field = 'route'
-        fields = ('auth_code', 'states', 'origin', 'destination', 'origin_name',
+        fields = ('auth_code', 'origin', 'destination', 'origin_name',
             'destination_name', 'creation_date')
-
-    def validate(self, attrs):
-        if len(attrs['states']) > 0:
-            states = State.objects.filter(code__in=attrs['states']).unionagg()
-            origin = attrs['origin'].geom
-            destination = attrs['destination'].geom
-            if origin.within(states) and destination.within(states) is False:
-                raise ValidationError(
-                    _('Origin or Destination is not within the allowed states.')
-                    )
-            else:
-                return attrs
-        else:
-            raise ValidationError(_('States field can not be empty.'))

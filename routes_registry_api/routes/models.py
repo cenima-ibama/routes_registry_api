@@ -27,14 +27,31 @@ class City(models.Model):
         return '%s - %s' % (self.name, self.state.code)
 
 
-class Port(models.Model):
+class ShippingPlace(models.Model):
+
+    CATEGORY_CHOICES = (
+        ('seaport', _('Seaport')),
+        ('river_port', _('River port')),
+        ('float', _('Float')),
+        ('mini_float', _('Mini float')),
+        ('sea_basin', _('Sea basin')),
+        ('river_basin', _('River basin')),
+    )
 
     name = models.CharField(max_length=255)
-    geom = models.PointField(srid=4674)
+    category = models.CharField(choices=CATEGORY_CHOICES, max_length=50)
+    point = models.PointField(srid=4674, null=True)
+    polygon = models.PolygonField(srid=4674, null=True)
     objects = models.GeoManager()
 
     def __str__(self):
         return '%s' % self.name
+
+    def geom(self):
+        if self.category in ['sea_basin', 'river_basin']:
+            return self.polygon
+        else:
+            return self.point
 
 
 class Airport(models.Model):
@@ -102,7 +119,7 @@ class AerialRoute(models.Model):
         if self.origin == self.destination:
             raise ValidationError(
                 _('The destination airport must be different from the origin.')
-                )
+            )
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -121,9 +138,8 @@ class AquaticRoute(models.Model):
 
     auth_code = models.CharField(_('Authorization Code'), max_length=40,
         unique=True)
-    states = models.ManyToManyField(State)
-    origin = models.ForeignKey(Port, related_name="route_origin")
-    destination = models.ForeignKey(Port, related_name="route_destination")
+    origin = models.ForeignKey(ShippingPlace, related_name="route_origin")
+    destination = models.ForeignKey(ShippingPlace, related_name="route_destination")
     creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
 
@@ -131,15 +147,7 @@ class AquaticRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return MultiPoint(self.origin.geom, self.destination.geom)
-
-    def clean(self):
-        self.clean_fields()
-
-        if self.origin == self.destination:
-            raise ValidationError(
-                _('The destination port must be different from the origin.')
-                )
+        return MultiPoint(self.origin.geom(), self.destination.geom())
 
     def save(self, *args, **kwargs):
         self.full_clean()

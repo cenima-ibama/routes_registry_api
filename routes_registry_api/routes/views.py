@@ -2,16 +2,16 @@
 from django_filters import FilterSet, CharFilter
 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.filters import DjangoFilterBackend
 from rest_framework_gis.filters import InBBoxFilter
 
-from .serializers import StateSerializer, PortSerializer
+from .serializers import StateSerializer, ShippingPlaceSerializer
 from .serializers import AirportSerializer
 from .serializers import RoadRouteSerializer
 from .serializers import AquaticRouteSerializer, AerialRouteSerializer
-from .models import State, Port, Airport
+from .models import State, ShippingPlace, Airport
 from .models import RoadRoute, AerialRoute, AquaticRoute
 
 
@@ -23,10 +23,10 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
     lookup_field = 'code'
 
 
-class PortList(ListCreateAPIView):
+class ShippingPlaceList(ListCreateAPIView):
     '''Create or list all ports in geojson format'''
-    model = Port
-    serializer_class = PortSerializer
+    model = ShippingPlace
+    serializer_class = ShippingPlaceSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
