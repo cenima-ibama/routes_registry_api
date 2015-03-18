@@ -24,12 +24,50 @@ class TestShippingPlace(TestCase):
         self.assertEqual(ShippingPlace.objects.all().count(), 4)
         self.assertEqual(port.geom(), port.point)
 
+    def test_invalid_creation_based_on_point(self):
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='seaport')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='sea_port',
+                polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
+
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='river_port')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='river_port',
+                polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
+
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='float')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='float',
+                polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
+
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='mini_float')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='mini_float',
+                polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
+
     def test_basin_creation(self):
         ShippingPlace.objects.create(name='Basin 1', category='sea_basin',
             polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
         ShippingPlace.objects.create(name='Basin 2', category='river_basin',
             polygon=Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]]))
         self.assertEqual(ShippingPlace.objects.all().count(), 2)
+
+    def test_invalid_basin_creation(self):
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Basin 1', category='sea_basin')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Basin 1', category='sea_basin',
+                point=Point([0.9, 0.9]))
+
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Basin 1', category='river_basin')
+        with self.assertRaises(ValidationError):
+            ShippingPlace.objects.create(name='Port 1', category='river_basin',
+                point=Point([0.9, 0.9]))
 
 
 class TestRoadRoute(TestCase):

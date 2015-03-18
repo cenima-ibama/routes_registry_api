@@ -268,32 +268,27 @@ class TestAerialRouteAPI(APITestCase):
 class TestAquaticRouteAPI(APITestCase):
 
     def setUp(self):
-        poly1 = Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]])
-        self.state1 = State(name='One', code='01', geom=MultiPolygon(poly1))
-        self.state1.save()
-
-        poly2 = Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]])
-        self.state2 = State(name='Two', code='02', geom=MultiPolygon(poly2))
-        self.state2.save()
-
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
 
         self.port_a = {
-            'name': "Port A",
+            'name': 'Port A',
+            'category': 'seaport',
             'point': {
                 "type": "Point",
                 "coordinates": [0.5, 0.5]
                 }
             }
         self.port_b = {
-            'name': "Port B",
+            'name': 'Port B',
+            'category': 'seaport',
             'point': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
                 }
             }
         self.port_c = {
-            'name': "Port C",
+            'name': 'Port C',
+            'category': 'seaport',
             'point': {
                 "type": "Point",
                 "coordinates": [2, -2]

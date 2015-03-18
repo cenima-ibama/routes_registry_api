@@ -40,8 +40,8 @@ class ShippingPlace(models.Model):
 
     name = models.CharField(max_length=255)
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=50)
-    point = models.PointField(srid=4674, null=True)
-    polygon = models.PolygonField(srid=4674, null=True)
+    point = models.PointField(srid=4674, null=True, blank=True)
+    polygon = models.PolygonField(srid=4674, null=True, blank=True)
     objects = models.GeoManager()
 
     def __str__(self):
@@ -52,6 +52,25 @@ class ShippingPlace(models.Model):
             return self.polygon
         else:
             return self.point
+
+    def clean(self):
+        self.clean_fields()
+        if self.category in ['sea_basin', 'river_basin']:
+            if self.polygon is None:
+                raise ValidationError(
+                    _("""Polygon field can't be null for objects in the
+                        'sea_basin' or 'river_basin' categories.""")
+                )
+        else:
+            if self.point is None:
+                raise ValidationError(
+                    _("""Point field can't be null for objects in the 'seaport',
+                        'river_port', 'float' or 'mini_float' categories.""")
+                )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(ShippingPlace, self).save(*args, **kwargs)
 
 
 class Airport(models.Model):

@@ -25,7 +25,7 @@ class ShippingPlaceSerializer(GeoFeatureModelSerializer):
     class Meta:
         model = ShippingPlace
         geo_field = 'point'
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'category')
 
 
 class AirportSerializer(GeoFeatureModelSerializer):
