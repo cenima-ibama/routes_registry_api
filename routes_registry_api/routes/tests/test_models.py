@@ -12,17 +12,20 @@ from ..models import RoadRoute, AerialRoute, AquaticRoute
 class TestShippingPlace(TestCase):
 
     def test_creation_based_on_point(self):
-        port = ShippingPlace.objects.create(name='Port 1', category='seaport',
+        seaport = ShippingPlace.objects.create(name='Port 1', category='seaport',
             point=Point([0.5, 0.5]))
-        ShippingPlace.objects.create(name='Port 2', category='river_port',
-            point=Point([0.7, 0.7]))
-        ShippingPlace.objects.create(name='Float 1', category='float',
-            point=Point([0.8, 0.8]))
-        ShippingPlace.objects.create(name='Mini float 1', category='mini_float',
-            point=Point([0.9, 0.9]))
+        river_port = ShippingPlace.objects.create(name='Port 2',
+            category='river_port', point=Point([0.7, 0.7]))
+        float_object = ShippingPlace.objects.create(name='Float 1',
+            category='float', point=Point([0.8, 0.8]))
+        mini_float = ShippingPlace.objects.create(name='Mini float 1',
+            category='mini_float', point=Point([0.9, 0.9]))
 
         self.assertEqual(ShippingPlace.objects.all().count(), 4)
-        self.assertEqual(port.geom(), port.point)
+        self.assertEqual(seaport.geom(), seaport.point)
+        self.assertEqual(river_port.geom(), river_port.point)
+        self.assertEqual(float_object.geom(), float_object.point)
+        self.assertEqual(mini_float.geom(), mini_float.point)
 
     def test_invalid_creation_based_on_point(self):
         with self.assertRaises(ValidationError):
@@ -50,11 +53,16 @@ class TestShippingPlace(TestCase):
                 polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
     def test_basin_creation(self):
-        ShippingPlace.objects.create(name='Basin 1', category='sea_basin',
+        sea_basin = ShippingPlace.objects.create(name='Basin 1',
+            category='sea_basin',
             polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
-        ShippingPlace.objects.create(name='Basin 2', category='river_basin',
+        river_basin = ShippingPlace.objects.create(name='Basin 2',
+            category='river_basin',
             polygon=Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]]))
+
         self.assertEqual(ShippingPlace.objects.all().count(), 2)
+        self.assertEqual(sea_basin.geom(), sea_basin.polygon)
+        self.assertEqual(river_basin.geom(), river_basin.polygon)
 
     def test_invalid_basin_creation(self):
         with self.assertRaises(ValidationError):
