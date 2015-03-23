@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from ..models import State, City, ShippingPlace, Airport
-from ..models import RoadRoute, AerialRoute, AquaticRoute
+from ..models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
 
 
 class TestShippingPlace(TestCase):
@@ -172,31 +172,171 @@ class TestAerialRoute(TestCase):
         self.assertEqual(AerialRoute.objects.all().count(), 1)
 
 
-class TestAquaticRoute(TestCase):
+class TestSeaRoute(TestCase):
 
     def setUp(self):
-        self.port_a = ShippingPlace.objects.create(name="A", category='seaport',
+        self.port = ShippingPlace.objects.create(name="A", category='seaport',
             point=Point([0.5, 0.5]))
-        self.port_b = ShippingPlace.objects.create(name="B", category='seaport',
+        self.float_object = ShippingPlace.objects.create(name="B", category='float',
             point=Point([0.5, -0.5]))
-        self.port_c = ShippingPlace.objects.create(name="C", category='seaport',
-            point=Point([2, 2]))
+        self.mini_float = ShippingPlace.objects.create(name="B",
+            category='mini_float',
+            point=Point([0.5, -0.6]))
+        self.basin = ShippingPlace.objects.create(name="C", category='sea_basin',
+            polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
-    def test_port_creation(self):
-        self.assertEqual(self.port_a.__str__(), 'A')
-        self.assertEqual(ShippingPlace.objects.all().count(), 3)
+        self.river_port = ShippingPlace.objects.create(name="A",
+            category='river_port',
+            point=Point([0.5, 1]))
+        self.river_basin = ShippingPlace.objects.create(name="C",
+            category='river_basin',
+            polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
-    def test_aquatic_route_creation(self):
-        valid_route = AquaticRoute(
-            origin=self.port_a,
-            destination=self.port_b,
+    def test_sea_route_creation(self):
+        valid_route = SeaRoute.objects.create(
+            origin=self.port,
+            destination=self.float_object,
             auth_code='123abc'
             )
-        valid_route.save()
 
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
 
         self.assertEqual(valid_route.route(),
             MultiPoint(Point(0.5, 0.5), Point(0.5, -0.5)))
 
-        self.assertEqual(AquaticRoute.objects.all().count(), 1)
+        SeaRoute.objects.create(
+            origin=self.basin,
+            destination=self.basin,
+            auth_code='1234abc'
+            )
+
+        SeaRoute.objects.create(
+            origin=self.float_object,
+            destination=self.basin,
+            auth_code='12345abc'
+            )
+
+        self.assertEqual(SeaRoute.objects.all().count(), 3)
+
+    def test_invalid_searoute_creation(self):
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.river_basin,
+                destination=self.basin,
+                auth_code='543abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.float_object,
+                destination=self.river_port,
+                auth_code='345abc'
+            )
+
+
+class TestRiverRoute(TestCase):
+
+    def setUp(self):
+        self.river_port = ShippingPlace.objects.create(name="A",
+            category='river_port',
+            point=Point([0.5, 0.5]))
+        self.river_port_b = ShippingPlace.objects.create(name="B",
+            category='river_port',
+            point=Point([0.5, -0.5]))
+        self.basin = ShippingPlace.objects.create(name="C", category='river_basin',
+            polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
+
+        self.seaport = ShippingPlace.objects.create(name="A", category='seaport',
+            point=Point([0.5, 0.7]))
+        self.float_object = ShippingPlace.objects.create(name="B",
+            category='float',
+            point=Point([0.5, -0.8]))
+        self.mini_float = ShippingPlace.objects.create(name="B",
+            category='mini_float',
+            point=Point([0.5, -0.3]))
+        self.sea_basin = ShippingPlace.objects.create(name="C",
+            category='sea_basin',
+            polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
+
+    def test_river_route_creation(self):
+        valid_route = RiverRoute.objects.create(
+            origin=self.river_port,
+            destination=self.river_port_b,
+            auth_code='123abc'
+            )
+
+        self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
+
+        self.assertEqual(valid_route.route(),
+            MultiPoint(Point(0.5, 0.5), Point(0.5, -0.5)))
+
+        RiverRoute.objects.create(
+            origin=self.basin,
+            destination=self.river_port_b,
+            auth_code='1234abc'
+        )
+
+        RiverRoute.objects.create(
+            origin=self.basin,
+            destination=self.basin,
+            auth_code='12345abc'
+        )
+
+        self.assertEqual(RiverRoute.objects.all().count(), 3)
+
+    def test_invalid_searoute_creation(self):
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.sea_basin,
+                destination=self.basin,
+                auth_code='543abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.float_object,
+                destination=self.river_port,
+                auth_code='345abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.mini_float,
+                destination=self.river_port,
+                auth_code='3456abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.seaport,
+                destination=self.basin,
+                auth_code='543abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.river_port,
+                destination=self.seaport,
+                auth_code='3457abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.river_port,
+                destination=self.mini_float,
+                auth_code='3458abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.river_port,
+                destination=self.float_object,
+                auth_code='3459abc'
+            )
+
+        with self.assertRaises(ValidationError):
+            SeaRoute.objects.create(
+                origin=self.river_port,
+                destination=self.sea_basin,
+                auth_code='3450abc'
+            )

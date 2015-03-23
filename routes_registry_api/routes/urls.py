@@ -7,7 +7,8 @@ from .views import StateDetail
 from .views import ShippingPlaceList, AirportList
 from .views import RoadRouteList, RoadRouteDetail
 from .views import AerialRouteList, AerialRouteDetail
-from .views import AquaticRouteList, AquaticRouteDetail
+from .views import SeaRouteList, SeaRouteDetail
+from .views import RiverRouteList, RiverRouteDetail
 
 
 urlpatterns = patterns('',
@@ -37,13 +38,13 @@ urlpatterns = patterns('',
         AerialRouteDetail.as_view(),
         name='aerial-route-detail'),
 
-    ### aquatic routes urls
-    url(r'^aquatic-routes/$',
-        AquaticRouteList.as_view(),
-        name='aquatic-route-list'),
-    url(r'^aquatic-routes/(?P<auth_code>\w+)/$',
-        AquaticRouteDetail.as_view(),
-        name='aquatic-route-detail'),
+    ### sea routes urls
+    url(r'^sea-routes/$',
+        SeaRouteList.as_view(),
+        name='sea-route-list'),
+    url(r'^sea-routes/(?P<auth_code>\w+)/$',
+        SeaRouteDetail.as_view(),
+        name='sea-route-detail'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

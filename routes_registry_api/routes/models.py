@@ -149,16 +149,16 @@ class AerialRoute(models.Model):
         verbose_name_plural = _('Aerial Routes')
 
 
-class AquaticRoute(models.Model):
-    """Every aquatic route is associated with one authorization code. The ports
-    of origin and destination must be differents and within the allowed states
-    of the company.
+class SeaRoute(models.Model):
+    """Every Sea Route is associated with one authorization code. It only
+    accepts as origin or destination ShippingPlaces categorized as 'seaport',
+    'float', 'mini_float' or 'sea_basin'.
     """
 
     auth_code = models.CharField(_('Authorization Code'), max_length=40,
         unique=True)
-    origin = models.ForeignKey(ShippingPlace, related_name="route_origin")
-    destination = models.ForeignKey(ShippingPlace, related_name="route_destination")
+    origin = models.ForeignKey(ShippingPlace, related_name="searoute_origin")
+    destination = models.ForeignKey(ShippingPlace, related_name="searoute_destination")
     creation_date = models.DateTimeField(auto_now_add=True)
     objects = models.GeoManager()
 
@@ -168,10 +168,61 @@ class AquaticRoute(models.Model):
     def route(self):
         return MultiPoint(self.origin.geom(), self.destination.geom())
 
+    def clean(self):
+        allowed_categories = ['seaport', 'float', 'mini_float', 'sea_basin']
+        if self.origin.category not in allowed_categories:
+            raise ValidationError(
+                _("""Origin field needs to be a seaport, float, mini_float or a
+                    sea_basin""")
+            )
+        if self.destination.category not in allowed_categories:
+            raise ValidationError(
+                _("""Destination field needs to be a seaport, float, mini_float
+                    or a sea_basin""")
+            )
+
     def save(self, *args, **kwargs):
         self.full_clean()
-        super(AquaticRoute, self).save(*args, **kwargs)
+        super(SeaRoute, self).save(*args, **kwargs)
 
     class Meta:
-        verbose_name = _('Aquatic Route')
-        verbose_name_plural = _('Aquatic Routes')
+        verbose_name = _('Sea Route')
+        verbose_name_plural = _('Sea Routes')
+
+
+class RiverRoute(models.Model):
+    """Every River Route is associated with one authorization code. It only
+    accepts as origin or destination ShippingPlaces categorized as 'river_port'
+    or 'river_basin'.
+    """
+
+    auth_code = models.CharField(_('Authorization Code'), max_length=40,
+        unique=True)
+    origin = models.ForeignKey(ShippingPlace, related_name="river_route_origin")
+    destination = models.ForeignKey(ShippingPlace, related_name="river_route_destination")
+    creation_date = models.DateTimeField(auto_now_add=True)
+    objects = models.GeoManager()
+
+    def __str__(self):
+        return '%s' % self.id
+
+    def route(self):
+        return MultiPoint(self.origin.geom(), self.destination.geom())
+
+    def clean(self):
+        if self.origin.category not in ['river_port', 'river_basin']:
+            raise ValidationError(
+                _("""Origin field needs to be a river_port or river_basin""")
+            )
+        if self.destination.category not in ['river_port', 'river_basin']:
+            raise ValidationError(
+                _("""Destination field needs to be a river_port or river_basin""")
+            )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(RiverRoute, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _('River Route')
+        verbose_name_plural = _('River Routes')

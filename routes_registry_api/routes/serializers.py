@@ -7,7 +7,7 @@ from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework.serializers import Field, SlugRelatedField
 
 from .models import State, ShippingPlace, Airport
-from .models import RoadRoute, AerialRoute, AquaticRoute
+from .models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
 
 
 class StateSerializer(GeoFeatureModelSerializer):
@@ -81,18 +81,30 @@ class AerialRouteSerializer(GeoFeatureModelSerializer):
             'destination_name', 'creation_date')
 
 
-class AquaticRouteSerializer(ModelSerializer):
-    """Serializer to the Aquatic Route model. Only accept route creation if the
-    states field is not empty and if both the origin and destination airports
-    is within the states geometry.
-    """
+class SeaRouteSerializer(ModelSerializer):
+    """Serializer to the SeaRoute model."""
 
     route = GeometryField(source='route', read_only=True)
     origin_name = Field(source='origin.name')
     destination_name = Field(source='destination.name')
 
     class Meta:
-        model = AquaticRoute
+        model = SeaRoute
+        id_field = False
+        geo_field = 'route'
+        fields = ('auth_code', 'origin', 'destination', 'origin_name',
+            'destination_name', 'creation_date')
+
+
+class RiverRouteSerializer(ModelSerializer):
+    """Serializer to the RiverRoute model."""
+
+    route = GeometryField(source='route', read_only=True)
+    origin_name = Field(source='origin.name')
+    destination_name = Field(source='destination.name')
+
+    class Meta:
+        model = RiverRoute
         id_field = False
         geo_field = 'route'
         fields = ('auth_code', 'origin', 'destination', 'origin_name',

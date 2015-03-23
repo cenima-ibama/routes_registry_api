@@ -10,9 +10,11 @@ from rest_framework_gis.filters import InBBoxFilter
 from .serializers import StateSerializer, ShippingPlaceSerializer
 from .serializers import AirportSerializer
 from .serializers import RoadRouteSerializer
-from .serializers import AquaticRouteSerializer, AerialRouteSerializer
+from .serializers import AerialRouteSerializer
+from .serializers import SeaRouteSerializer
+from .serializers import RiverRouteSerializer
 from .models import State, ShippingPlace, Airport
-from .models import RoadRoute, AerialRoute, AquaticRoute
+from .models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
 
 
 class StateDetail(RetrieveUpdateDestroyAPIView):
@@ -80,16 +82,31 @@ class AerialRouteDetail(RetrieveUpdateDestroyAPIView):
     lookup_field = 'auth_code'
 
 
-class AquaticRouteList(ListCreateAPIView):
-    '''Create or list AquaticRoutes'''
-    model = AquaticRoute
-    serializer_class = AquaticRouteSerializer
+class SeaRouteList(ListCreateAPIView):
+    '''Create or list SeaRoutes'''
+    model = SeaRoute
+    serializer_class = SeaRouteSerializer
     permission_classes = (IsAuthenticated,)
 
 
-class AquaticRouteDetail(RetrieveUpdateDestroyAPIView):
-    '''Detail of an AquaticRoute'''
-    model = AquaticRoute
-    serializer_class = AquaticRouteSerializer
+class SeaRouteDetail(RetrieveUpdateDestroyAPIView):
+    '''Detail of an SeaRoute'''
+    model = SeaRoute
+    serializer_class = SeaRouteSerializer
+    permission_classes = (IsAuthenticated,)
+    lookup_field = 'auth_code'
+
+
+class RiverRouteList(ListCreateAPIView):
+    '''Create or list RiverRoutes'''
+    model = RiverRoute
+    serializer_class = RiverRouteSerializer
+    permission_classes = (IsAuthenticated,)
+
+
+class RiverRouteDetail(RetrieveUpdateDestroyAPIView):
+    '''Detail of an RiverRoute'''
+    model = SeaRoute
+    serializer_class = RiverRouteSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = 'auth_code'

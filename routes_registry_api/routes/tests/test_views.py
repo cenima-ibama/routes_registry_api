@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from ..models import State, City, Airport, ShippingPlace
-from ..models import RoadRoute, AerialRoute, AquaticRoute
+from ..models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
 
 
 class TestAPIAuthURL(TestCase):
@@ -265,7 +265,7 @@ class TestAerialRouteAPI(APITestCase):
         self.assertEqual(AerialRoute.objects.all().count(), 0)
 
 
-class TestAquaticRouteAPI(APITestCase):
+class TestSeaRouteAPI(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create_user('user', 'i@t.com', 'password')
@@ -286,22 +286,22 @@ class TestAquaticRouteAPI(APITestCase):
                 "coordinates": [0.5, -0.5]
                 }
             }
-        self.port_c = {
-            'name': 'Port C',
-            'category': 'seaport',
-            'point': {
-                "type": "Point",
-                "coordinates": [2, -2]
+        self.sea_basin = {
+            'name': 'Sea Basin',
+            'category': 'sea_basin',
+            'polygon': {
+                "type": "Polygon",
+                "coordinates": [[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]
                 }
             }
 
-    def test_aquatic_route_list(self):
-        url = reverse('api:aquatic-route-list')
+    def test_sea_route_list(self):
+        url = reverse('api:sea-route-list')
         self.client.login(username=self.user.username, password='password')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_unlogged_aquatic_route(self):
+    def test_unlogged_sea_route(self):
         url = reverse('api:shipping-place-list')
         response = self.client.post(url, self.port_a, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -316,17 +316,29 @@ class TestAquaticRouteAPI(APITestCase):
         response = self.client.post(url, self.port_b, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        id_a, id_b = [port.id for port in ShippingPlace.objects.all()]
-        aquatic_route = {
+        response = self.client.post(url, self.sea_basin, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        id_a, id_b, id_c = [port.id for port in ShippingPlace.objects.all()]
+        sea_route = {
             'auth_code': '123abc',
             'origin': id_a,
             'destination': id_b
             }
-        url = reverse('api:aquatic-route-list')
-        response = self.client.post(url, aquatic_route, format='json')
+        url = reverse('api:sea-route-list')
+        response = self.client.post(url, sea_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        auth_code = AquaticRoute.objects.all()[0].auth_code
-        url = reverse('api:aquatic-route-detail', args=[auth_code])
+        auth_code = SeaRoute.objects.all()[0].auth_code
+        url = reverse('api:sea-route-detail', args=[auth_code])
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        sea_route = {
+            'auth_code': '123abc',
+            'origin': id_c,
+            'destination': id_c
+            }
+        url = reverse('api:sea-route-list')
+        response = self.client.post(url, sea_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
