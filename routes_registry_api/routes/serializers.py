@@ -20,7 +20,20 @@ class StateSerializer(GeoFeatureModelSerializer):
 
 
 class ShippingPlaceSerializer(GeoFeatureModelSerializer):
-    """Serializer to the Port model."""
+    """Serializer to the ShippingPlace model. Used only to serialize data."""
+
+    geom = GeometryField(source='geom', read_only=True)
+
+    class Meta:
+        model = ShippingPlace
+        geo_field = 'geom'
+        fields = ('id', 'name', 'category')
+
+
+class FloatsSerializer(GeoFeatureModelSerializer):
+    """Serializer to the ShippingPlace model. Used only to deserialize data,
+    allowing the users to create float and minifloat objects.
+    """
 
     class Meta:
         model = ShippingPlace

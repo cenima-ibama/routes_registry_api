@@ -302,7 +302,7 @@ class TestSeaRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_aquatic_route_creation(self):
-        url = reverse('api:shipping-place-list')
+        url = reverse('api:create-float')
         self.client.login(username=self.user.username, password='password')
 
         response = self.client.post(url, self.port_a, format='json')

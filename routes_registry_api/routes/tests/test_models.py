@@ -284,7 +284,7 @@ class TestRiverRoute(TestCase):
 
         self.assertEqual(RiverRoute.objects.all().count(), 3)
 
-    def test_invalid_searoute_creation(self):
+    def test_invalid_river_route_creation(self):
         with self.assertRaises(ValidationError):
             SeaRoute.objects.create(
                 origin=self.sea_basin,

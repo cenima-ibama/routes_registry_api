@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 from rest_framework.filters import DjangoFilterBackend
 from rest_framework_gis.filters import InBBoxFilter
 
-from .serializers import StateSerializer, ShippingPlaceSerializer
+from .serializers import StateSerializer
+from .serializers import ShippingPlaceSerializer, FloatsSerializer
 from .serializers import AirportSerializer
 from .serializers import RoadRouteSerializer
 from .serializers import AerialRouteSerializer
@@ -26,9 +27,16 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
 
 
 class ShippingPlaceList(ListCreateAPIView):
-    '''Create or list all ports in geojson format'''
+    '''List ShippingPlaces in geojson format'''
     model = ShippingPlace
     serializer_class = ShippingPlaceSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+
+class CreateFloatsView(ListCreateAPIView):
+    '''View to create floats and minifloats ShippinPlace objects'''
+    model = ShippingPlace
+    serializer_class = FloatsSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
