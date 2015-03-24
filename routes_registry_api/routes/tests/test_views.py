@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.core.urlresolvers import reverse
-from django.contrib.gis.geos import Polygon, MultiPolygon
+from django.contrib.gis.geos import Point, Polygon, MultiPolygon
 from django.contrib.auth.models import User
 
 from rest_framework.test import APITestCase
@@ -297,11 +297,11 @@ class TestSeaRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_unlogged_sea_route(self):
-        url = reverse('api:shipping-place-list')
-        response = self.client.post(url, self.port_a, format='json')
+        url = reverse('api:sea-route-list')
+        response = self.client.post(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_aquatic_route_creation(self):
+    def test_sea_route_creation(self):
         url = reverse('api:create-float')
         self.client.login(username=self.user.username, password='password')
 
@@ -333,4 +333,57 @@ class TestSeaRouteAPI(APITestCase):
             }
         url = reverse('api:sea-route-list')
         response = self.client.post(url, sea_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class TestRiverRouteAPI(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+
+        ShippingPlace.objects.create(name="A",
+            category='riverport',
+            point=Point([0.5, 0.5]))
+
+        ShippingPlace.objects.create(name='Basin 1',
+            category='riverbasin',
+            polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
+
+    def test_river_route_list(self):
+        url = reverse('api:river-route-list')
+        self.client.login(username=self.user.username, password='password')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_unlogged_river_route(self):
+        url = reverse('api:river-route-list')
+        response = self.client.post(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_river_route_creation(self):
+        self.client.login(username=self.user.username, password='password')
+        basin, port = [item.id for item in ShippingPlace.objects.all()]
+
+        river_route = {
+            'auth_code': '123abc',
+            'origin': port,
+            'destination': basin
+            }
+        url = reverse('api:river-route-list')
+        response = self.client.post(url, river_route, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(RiverRoute.objects.all().count(), 1)
+
+        auth_code = RiverRoute.objects.all()[0].auth_code
+        url = reverse('api:river-route-detail', args=[auth_code])
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        river_route = {
+            'auth_code': '12345abc',
+            'origin': basin,
+            'destination': basin
+            }
+        url = reverse('api:river-route-list')
+        response = self.client.post(url, river_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

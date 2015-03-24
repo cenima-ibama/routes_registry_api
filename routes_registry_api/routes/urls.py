@@ -50,6 +50,14 @@ urlpatterns = patterns('',
     url(r'^sea-routes/(?P<auth_code>\w+)/$',
         SeaRouteDetail.as_view(),
         name='sea-route-detail'),
+
+    ### river routes urls
+    url(r'^river-routes/$',
+        RiverRouteList.as_view(),
+        name='river-route-list'),
+    url(r'^river-routes/(?P<auth_code>\w+)/$',
+        RiverRouteDetail.as_view(),
+        name='river-route-detail'),
 )
 
 urlpatterns = format_suffix_patterns(urlpatterns)

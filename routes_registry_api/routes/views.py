@@ -114,7 +114,7 @@ class RiverRouteList(ListCreateAPIView):
 
 class RiverRouteDetail(RetrieveUpdateDestroyAPIView):
     '''Detail of an RiverRoute'''
-    model = SeaRoute
+    model = RiverRoute
     serializer_class = RiverRouteSerializer
     permission_classes = (IsAuthenticated,)
     lookup_field = 'auth_code'
