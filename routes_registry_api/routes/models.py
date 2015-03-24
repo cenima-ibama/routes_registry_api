@@ -31,11 +31,11 @@ class ShippingPlace(models.Model):
 
     CATEGORY_CHOICES = (
         ('seaport', _('Seaport')),
-        ('river_port', _('River port')),
+        ('riverport', _('River port')),
         ('float', _('Float')),
-        ('mini_float', _('Mini float')),
-        ('sea_basin', _('Sea basin')),
-        ('river_basin', _('River basin')),
+        ('minifloat', _('Mini float')),
+        ('seabasin', _('Sea basin')),
+        ('riverbasin', _('River basin')),
     )
 
     name = models.CharField(max_length=255)
@@ -48,24 +48,24 @@ class ShippingPlace(models.Model):
         return '%s' % self.name
 
     def geom(self):
-        if self.category in ['sea_basin', 'river_basin']:
+        if self.category in ['seabasin', 'riverbasin']:
             return self.polygon
         else:
             return self.point
 
     def clean(self):
         self.clean_fields()
-        if self.category in ['sea_basin', 'river_basin']:
+        if self.category in ['seabasin', 'riverbasin']:
             if self.polygon is None:
                 raise ValidationError(
                     _("""Polygon field can't be null for objects in the
-                        'sea_basin' or 'river_basin' categories.""")
+                        'seabasin' or 'riverbasin' categories.""")
                 )
         else:
             if self.point is None:
                 raise ValidationError(
                     _("""Point field can't be null for objects in the 'seaport',
-                        'river_port', 'float' or 'mini_float' categories.""")
+                        'riverport', 'float' or 'minifloat' categories.""")
                 )
 
     def save(self, *args, **kwargs):
@@ -152,7 +152,7 @@ class AerialRoute(models.Model):
 class SeaRoute(models.Model):
     """Every Sea Route is associated with one authorization code. It only
     accepts as origin or destination ShippingPlaces categorized as 'seaport',
-    'float', 'mini_float' or 'sea_basin'.
+    'float', 'minifloat' or 'seabasin'.
     """
 
     auth_code = models.CharField(_('Authorization Code'), max_length=40,
@@ -169,16 +169,16 @@ class SeaRoute(models.Model):
         return MultiPoint(self.origin.geom(), self.destination.geom())
 
     def clean(self):
-        allowed_categories = ['seaport', 'float', 'mini_float', 'sea_basin']
+        allowed_categories = ['seaport', 'float', 'minifloat', 'seabasin']
         if self.origin.category not in allowed_categories:
             raise ValidationError(
-                _("""Origin field needs to be a seaport, float, mini_float or a
-                    sea_basin""")
+                _("""Origin field needs to be a seaport, float, minifloat or a
+                    seabasin""")
             )
         if self.destination.category not in allowed_categories:
             raise ValidationError(
-                _("""Destination field needs to be a seaport, float, mini_float
-                    or a sea_basin""")
+                _("""Destination field needs to be a seaport, float, minifloat
+                    or a seabasin""")
             )
 
     def save(self, *args, **kwargs):
@@ -193,7 +193,7 @@ class SeaRoute(models.Model):
 class RiverRoute(models.Model):
     """Every River Route is associated with one authorization code. It only
     accepts as origin or destination ShippingPlaces categorized as 'river_port'
-    or 'river_basin'.
+    or 'riverbasin'.
     """
 
     auth_code = models.CharField(_('Authorization Code'), max_length=40,
@@ -210,13 +210,13 @@ class RiverRoute(models.Model):
         return MultiPoint(self.origin.geom(), self.destination.geom())
 
     def clean(self):
-        if self.origin.category not in ['river_port', 'river_basin']:
+        if self.origin.category not in ['riverport', 'riverbasin']:
             raise ValidationError(
-                _("""Origin field needs to be a river_port or river_basin""")
+                _("""Origin field needs to be a riverport or riverbasin""")
             )
-        if self.destination.category not in ['river_port', 'river_basin']:
+        if self.destination.category not in ['riverport', 'riverbasin']:
             raise ValidationError(
-                _("""Destination field needs to be a river_port or river_basin""")
+                _("""Destination field needs to be a river_port or riverbasin""")
             )
 
     def save(self, *args, **kwargs):

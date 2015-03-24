@@ -15,11 +15,11 @@ class TestShippingPlace(TestCase):
         seaport = ShippingPlace.objects.create(name='Port 1', category='seaport',
             point=Point([0.5, 0.5]))
         river_port = ShippingPlace.objects.create(name='Port 2',
-            category='river_port', point=Point([0.7, 0.7]))
+            category='riverport', point=Point([0.7, 0.7]))
         float_object = ShippingPlace.objects.create(name='Float 1',
             category='float', point=Point([0.8, 0.8]))
         mini_float = ShippingPlace.objects.create(name='Mini float 1',
-            category='mini_float', point=Point([0.9, 0.9]))
+            category='minifloat', point=Point([0.9, 0.9]))
 
         self.assertEqual(ShippingPlace.objects.all().count(), 4)
         self.assertEqual(seaport.geom(), seaport.point)
@@ -31,13 +31,13 @@ class TestShippingPlace(TestCase):
         with self.assertRaises(ValidationError):
             ShippingPlace.objects.create(name='Port 1', category='seaport')
         with self.assertRaises(ValidationError):
-            ShippingPlace.objects.create(name='Port 1', category='sea_port',
+            ShippingPlace.objects.create(name='Port 1', category='seaport',
                 polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
         with self.assertRaises(ValidationError):
-            ShippingPlace.objects.create(name='Port 1', category='river_port')
+            ShippingPlace.objects.create(name='Port 1', category='riverport')
         with self.assertRaises(ValidationError):
-            ShippingPlace.objects.create(name='Port 1', category='river_port',
+            ShippingPlace.objects.create(name='Port 1', category='riverport',
                 polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
         with self.assertRaises(ValidationError):
@@ -47,17 +47,17 @@ class TestShippingPlace(TestCase):
                 polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
         with self.assertRaises(ValidationError):
-            ShippingPlace.objects.create(name='Port 1', category='mini_float')
+            ShippingPlace.objects.create(name='Port 1', category='minifloat')
         with self.assertRaises(ValidationError):
-            ShippingPlace.objects.create(name='Port 1', category='mini_float',
+            ShippingPlace.objects.create(name='Port 1', category='minifloat',
                 polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
     def test_basin_creation(self):
         sea_basin = ShippingPlace.objects.create(name='Basin 1',
-            category='sea_basin',
+            category='seabasin',
             polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
         river_basin = ShippingPlace.objects.create(name='Basin 2',
-            category='river_basin',
+            category='riverbasin',
             polygon=Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]]))
 
         self.assertEqual(ShippingPlace.objects.all().count(), 2)
@@ -180,16 +180,16 @@ class TestSeaRoute(TestCase):
         self.float_object = ShippingPlace.objects.create(name="B", category='float',
             point=Point([0.5, -0.5]))
         self.mini_float = ShippingPlace.objects.create(name="B",
-            category='mini_float',
+            category='minifloat',
             point=Point([0.5, -0.6]))
-        self.basin = ShippingPlace.objects.create(name="C", category='sea_basin',
+        self.basin = ShippingPlace.objects.create(name="C", category='seabasin',
             polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
         self.river_port = ShippingPlace.objects.create(name="A",
-            category='river_port',
+            category='riverport',
             point=Point([0.5, 1]))
         self.river_basin = ShippingPlace.objects.create(name="C",
-            category='river_basin',
+            category='riverbasin',
             polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
     def test_sea_route_creation(self):
@@ -238,12 +238,12 @@ class TestRiverRoute(TestCase):
 
     def setUp(self):
         self.river_port = ShippingPlace.objects.create(name="A",
-            category='river_port',
+            category='riverport',
             point=Point([0.5, 0.5]))
         self.river_port_b = ShippingPlace.objects.create(name="B",
-            category='river_port',
+            category='riverport',
             point=Point([0.5, -0.5]))
-        self.basin = ShippingPlace.objects.create(name="C", category='river_basin',
+        self.basin = ShippingPlace.objects.create(name="C", category='riverbasin',
             polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
         self.seaport = ShippingPlace.objects.create(name="A", category='seaport',
@@ -252,10 +252,10 @@ class TestRiverRoute(TestCase):
             category='float',
             point=Point([0.5, -0.8]))
         self.mini_float = ShippingPlace.objects.create(name="B",
-            category='mini_float',
+            category='minifloat',
             point=Point([0.5, -0.3]))
         self.sea_basin = ShippingPlace.objects.create(name="C",
-            category='sea_basin',
+            category='seabasin',
             polygon=Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]))
 
     def test_river_route_creation(self):

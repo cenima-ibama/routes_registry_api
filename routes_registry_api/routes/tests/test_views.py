@@ -272,7 +272,7 @@ class TestSeaRouteAPI(APITestCase):
 
         self.port_a = {
             'name': 'Port A',
-            'category': 'seaport',
+            'category': 'float',
             'point': {
                 "type": "Point",
                 "coordinates": [0.5, 0.5]
@@ -280,20 +280,15 @@ class TestSeaRouteAPI(APITestCase):
             }
         self.port_b = {
             'name': 'Port B',
-            'category': 'seaport',
+            'category': 'minifloat',
             'point': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
                 }
             }
-        self.sea_basin = {
-            'name': 'Sea Basin',
-            'category': 'sea_basin',
-            'polygon': {
-                "type": "Polygon",
-                "coordinates": [[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]
-                }
-            }
+        self.sea_basin = ShippingPlace.objects.create(name='Basin 1',
+            category='seabasin',
+            polygon=Polygon([[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]))
 
     def test_sea_route_list(self):
         url = reverse('api:sea-route-list')
@@ -316,14 +311,11 @@ class TestSeaRouteAPI(APITestCase):
         response = self.client.post(url, self.port_b, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        response = self.client.post(url, self.sea_basin, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        id_a, id_b, id_c = [port.id for port in ShippingPlace.objects.all()]
+        sea_basin, port_a, port_b = [item.id for item in ShippingPlace.objects.all()]
         sea_route = {
             'auth_code': '123abc',
-            'origin': id_a,
-            'destination': id_b
+            'origin': port_a,
+            'destination': port_b
             }
         url = reverse('api:sea-route-list')
         response = self.client.post(url, sea_route, format='json')
@@ -335,9 +327,9 @@ class TestSeaRouteAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         sea_route = {
-            'auth_code': '123abc',
-            'origin': id_c,
-            'destination': id_c
+            'auth_code': '12345abc',
+            'origin': sea_basin,
+            'destination': sea_basin
             }
         url = reverse('api:sea-route-list')
         response = self.client.post(url, sea_route, format='json')
