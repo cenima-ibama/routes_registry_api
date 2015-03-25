@@ -286,57 +286,59 @@ class TestRiverRoute(TestCase):
 
     def test_invalid_river_route_creation(self):
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.sea_basin,
                 destination=self.basin,
                 auth_code='543abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.float_object,
                 destination=self.river_port,
                 auth_code='345abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.mini_float,
                 destination=self.river_port,
                 auth_code='3456abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.seaport,
                 destination=self.basin,
                 auth_code='543abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.river_port,
                 destination=self.seaport,
                 auth_code='3457abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.river_port,
                 destination=self.mini_float,
                 auth_code='3458abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.river_port,
                 destination=self.float_object,
                 auth_code='3459abc'
             )
 
         with self.assertRaises(ValidationError):
-            SeaRoute.objects.create(
+            RiverRoute.objects.create(
                 origin=self.river_port,
                 destination=self.sea_basin,
                 auth_code='3450abc'
             )
+
+        self.assertEqual(RiverRoute.objects.all().count(), 0)
