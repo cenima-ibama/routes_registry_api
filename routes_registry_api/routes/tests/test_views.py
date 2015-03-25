@@ -37,6 +37,70 @@ class TestShippingPlaceAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
+class TestFloatsAPI(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create_user('user', 'i@t.com', 'password')
+
+        self.float_object = {
+            'name': 'Port A',
+            'category': 'float',
+            'point': {
+                "type": "Point",
+                "coordinates": [0.5, 0.5]
+                }
+            }
+        self.minifloat = {
+            'name': 'Port B',
+            'category': 'minifloat',
+            'point': {
+                "type": "Point",
+                "coordinates": [0.5, -0.5]
+                }
+            }
+
+    def test_creation(self):
+        url = reverse('api:create-float')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, self.float_object, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response = self.client.post(url, self.minifloat, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_unlogged_response(self):
+        url = reverse('api:create-float')
+        response = self.client.post(url, self.minifloat, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_invalid_creation(self):
+        port_a = {
+            'name': 'Port A',
+            'category': 'seaport',
+            'point': {
+                "type": "Point",
+                "coordinates": [0.5, 0.5]
+                }
+            }
+        port_b = {
+            'name': 'Port B',
+            'category': 'riverport',
+            'point': {
+                "type": "Point",
+                "coordinates": [0.5, -0.5]
+                }
+            }
+        url = reverse('api:create-float')
+        self.client.login(username=self.user.username, password='password')
+
+        response = self.client.post(url, port_a, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(url, port_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
 class TestAirportAPI(APITestCase):
 
     def setUp(self):
@@ -372,7 +436,6 @@ class TestRiverRouteAPI(APITestCase):
         url = reverse('api:river-route-list')
         response = self.client.post(url, river_route, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(RiverRoute.objects.all().count(), 1)
 
         auth_code = RiverRoute.objects.all()[0].auth_code
         url = reverse('api:river-route-detail', args=[auth_code])

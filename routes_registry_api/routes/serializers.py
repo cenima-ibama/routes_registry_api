@@ -40,6 +40,14 @@ class FloatsSerializer(GeoFeatureModelSerializer):
         geo_field = 'point'
         fields = ('id', 'name', 'category')
 
+    def validate_category(self, attrs, source):
+        """Check if the category is float or minifloat"""
+        if attrs[source] not in ['float', 'minifloat']:
+            raise ValidationError(
+                _('It is allowed to create only float and minifloat objects')
+            )
+        return attrs
+
 
 class AirportSerializer(GeoFeatureModelSerializer):
     """Serializer to the Airport model."""
