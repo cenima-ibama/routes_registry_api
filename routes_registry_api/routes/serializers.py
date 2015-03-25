@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from django.utils.translation import ugettext, ugettext_lazy as _
-
+import simplejson
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 from rest_framework_gis.fields import GeometryField
 from rest_framework.serializers import ModelSerializer, ValidationError
 from rest_framework.serializers import Field, SlugRelatedField
+
+from django.utils.translation import ugettext, ugettext_lazy as _
+from django.contrib.gis.geos import Polygon
 
 from .models import State, ShippingPlace, Airport
 from .models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
@@ -45,6 +47,17 @@ class FloatsSerializer(GeoFeatureModelSerializer):
         if attrs[source] not in ['float', 'minifloat']:
             raise ValidationError(
                 _('It is allowed to create only float and minifloat objects')
+            )
+        return attrs
+
+    def validate_point(self, attrs, source):
+        """Check if the point is within the Brazilian territorial sea limits"""
+        data_json = open('routes/fixtures/brazil-territorial-sea.geojson', 'r').read()
+        data = simplejson.loads(data_json)
+        limits = Polygon(data['features'][0]['geometry'].get('coordinates')[0])
+        if not attrs[source].within(limits):
+            raise ValidationError(
+                _('The point is not inside the Brazilian territorial sea limits')
             )
         return attrs
 

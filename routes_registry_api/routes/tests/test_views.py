@@ -48,7 +48,7 @@ class TestFloatsAPI(APITestCase):
             'category': 'float',
             'point': {
                 "type": "Point",
-                "coordinates": [0.5, 0.5]
+                "coordinates": [-41.8799, -25.2447]
                 }
             }
         self.minifloat = {
@@ -56,7 +56,7 @@ class TestFloatsAPI(APITestCase):
             'category': 'minifloat',
             'point': {
                 "type": "Point",
-                "coordinates": [0.5, -0.5]
+                "coordinates": [-29.2676, -20.3858]
                 }
             }
 
@@ -79,12 +79,20 @@ class TestFloatsAPI(APITestCase):
             'category': 'seaport',
             'point': {
                 "type": "Point",
-                "coordinates": [0.5, 0.5]
+                "coordinates": [-41.8799, -25.2447]
                 }
             }
         port_b = {
             'name': 'Port B',
             'category': 'riverport',
+            'point': {
+                "type": "Point",
+                "coordinates": [-41.8799, -25.2447]
+                }
+            }
+        port_c = {
+            'name': 'Port B',
+            'category': 'float',
             'point': {
                 "type": "Point",
                 "coordinates": [0.5, -0.5]
@@ -96,6 +104,9 @@ class TestFloatsAPI(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         response = self.client.post(self.url, port_b, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        response = self.client.post(self.url, port_c, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
@@ -337,7 +348,7 @@ class TestSeaRouteAPI(APITestCase):
             'category': 'float',
             'point': {
                 "type": "Point",
-                "coordinates": [0.5, 0.5]
+                "coordinates": [-41.8799, -25.2447]
                 }
             }
         self.port_b = {
@@ -345,7 +356,7 @@ class TestSeaRouteAPI(APITestCase):
             'category': 'minifloat',
             'point': {
                 "type": "Point",
-                "coordinates": [0.5, -0.5]
+                "coordinates": [-29.2676, -20.3858]
                 }
             }
         self.sea_basin = ShippingPlace.objects.create(name='Basin 1',
