@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-from django_filters import FilterSet, CharFilter
-
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from rest_framework.filters import DjangoFilterBackend
-from rest_framework_gis.filters import InBBoxFilter
 
 from .serializers import StateSerializer
 from .serializers import ShippingPlaceSerializer, FloatsSerializer
@@ -40,24 +36,18 @@ class CreateFloatsView(ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class AirportNameFilter(FilterSet):
-    '''Filter airports by name'''
-    name = CharFilter(name='name', lookup_type='icontains')
-
-    class Meta:
-        model = Airport
-        fields = ['name']
-
-
 class AirportList(ListCreateAPIView):
     '''Create or list airports in geojson format. It is possible to filter
     by name or passing a bbox coordinates'''
-    model = Airport
     serializer_class = AirportSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
-    bbox_filter_field = 'geom'
-    filter_backends = (InBBoxFilter, DjangoFilterBackend,)
-    filter_class = AirportNameFilter
+
+    def get_queryset(self):
+        queryset = Airport.objects.all()
+        ids = self.request.QUERY_PARAMS.get('ids', None)
+        if ids is not None:
+            queryset = queryset.filter(id__in=ids.split(','))
+        return queryset
 
 
 class RoadRouteList(ListCreateAPIView):
