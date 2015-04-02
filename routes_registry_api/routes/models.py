@@ -93,9 +93,9 @@ class RoadRoute(models.Model):
     states = models.ManyToManyField(State)
     geom = models.LineStringField(srid=4674)
     creation_date = models.DateTimeField(auto_now_add=True)
-    origin = models.ForeignKey(City, blank=True,
+    origin = models.ForeignKey(City, blank=True, null=True,
         related_name='roadroute_origin')
-    destination = models.ForeignKey(City, blank=True,
+    destination = models.ForeignKey(City, blank=True, null=True,
         related_name='roadroute_destination')
     roads = models.CharField(max_length=255)
     objects = models.GeoManager()
