@@ -115,7 +115,7 @@ class AerialRouteSerializer(GeoFeatureModelSerializer):
             'destination_name', 'creation_date')
 
 
-class SeaRouteSerializer(ModelSerializer):
+class SeaRouteSerializer(GeoFeatureModelSerializer):
     """Serializer to the SeaRoute model."""
 
     route = GeometryField(source='route', read_only=True)
@@ -130,7 +130,7 @@ class SeaRouteSerializer(ModelSerializer):
             'destination_name', 'creation_date')
 
 
-class RiverRouteSerializer(ModelSerializer):
+class RiverRouteSerializer(GeoFeatureModelSerializer):
     """Serializer to the RiverRoute model."""
 
     route = GeometryField(source='route', read_only=True)
