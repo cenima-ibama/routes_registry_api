@@ -31,10 +31,23 @@ class TestStateAPI(APITestCase):
 
 
 class TestShippingPlaceAPI(APITestCase):
-    def test_port_list_response(self):
+    def setUp(self):
+        ShippingPlace.objects.create(name='Port 1', category='seaport',
+            point=Point([0.5, 0.5]))
+        ShippingPlace.objects.create(name='Basin 1',
+            category='riverbasin',
+            polygon=Polygon([[0, 0], [0, -1], [1, -1], [1, 0], [0, 0]]))
+
+    def test_shipping_place_list_response(self):
         url = reverse('api:shipping-place-list')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 2)
+
+        id_1 = ShippingPlace.objects.all()[0].id
+        response = self.client.get(url, {'ids': id_1}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['features']), 1)
 
 
 class TestFloatsAPI(APITestCase):

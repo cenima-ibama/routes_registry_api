@@ -24,9 +24,15 @@ class StateDetail(RetrieveUpdateDestroyAPIView):
 
 class ShippingPlaceList(ListCreateAPIView):
     '''List ShippingPlaces in geojson format'''
-    model = ShippingPlace
     serializer_class = ShippingPlaceSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+        queryset = ShippingPlace.objects.all()
+        ids = self.request.QUERY_PARAMS.get('ids', None)
+        if ids is not None:
+            queryset = queryset.filter(id__in=ids.split(','))
+        return queryset
 
 
 class CreateFloatsView(ListCreateAPIView):
