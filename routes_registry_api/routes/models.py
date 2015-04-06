@@ -1,5 +1,5 @@
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import Point, MultiPoint
+from django.contrib.gis.geos import Point, GeometryCollection
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext, ugettext_lazy as _
 
@@ -130,7 +130,7 @@ class AerialRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return MultiPoint(self.origin.geom, self.destination.geom)
+        return GeometryCollection(self.origin.geom, self.destination.geom)
 
     def clean(self):
         self.clean_fields()
@@ -166,7 +166,7 @@ class SeaRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return MultiPoint(self.origin.geom(), self.destination.geom())
+        return GeometryCollection(self.origin.geom(), self.destination.geom())
 
     def clean(self):
         allowed_categories = ['seaport', 'float', 'minifloat', 'seabasin']
@@ -207,7 +207,7 @@ class RiverRoute(models.Model):
         return '%s' % self.id
 
     def route(self):
-        return MultiPoint(self.origin.geom(), self.destination.geom())
+        return GeometryCollection(self.origin.geom(), self.destination.geom())
 
     def clean(self):
         if self.origin.category not in ['riverport', 'riverbasin']:

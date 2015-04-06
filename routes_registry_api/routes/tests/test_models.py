@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.test import TestCase
 from django.contrib.gis.geos import Polygon, MultiPolygon, LineString
-from django.contrib.gis.geos import Point, MultiPoint
+from django.contrib.gis.geos import Point, GeometryCollection
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
@@ -155,7 +155,7 @@ class TestAerialRoute(TestCase):
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
 
         self.assertEqual(valid_route.route(),
-            MultiPoint(Point(0.5, 0.5), Point(0.5,-0.5)))
+            GeometryCollection(Point(0.5, 0.5), Point(0.5,-0.5)))
 
         with self.assertRaises(ValidationError):
             AerialRoute.objects.create(auth_code='123a',
@@ -202,13 +202,20 @@ class TestSeaRoute(TestCase):
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
 
         self.assertEqual(valid_route.route(),
-            MultiPoint(Point(0.5, 0.5), Point(0.5, -0.5)))
+            GeometryCollection(Point(0.5, 0.5), Point(0.5, -0.5)))
 
-        SeaRoute.objects.create(
+        valid_route = SeaRoute.objects.create(
             origin=self.basin,
             destination=self.basin,
             auth_code='1234abc'
             )
+
+        self.assertEqual(valid_route.route(),
+            GeometryCollection(
+                Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]),
+                Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]])
+            )
+        )
 
         SeaRoute.objects.create(
             origin=self.float_object,
@@ -268,12 +275,19 @@ class TestRiverRoute(TestCase):
         self.assertEqual(valid_route.__str__(), '%s' % valid_route.id)
 
         self.assertEqual(valid_route.route(),
-            MultiPoint(Point(0.5, 0.5), Point(0.5, -0.5)))
+            GeometryCollection(Point(0.5, 0.5), Point(0.5, -0.5)))
 
-        RiverRoute.objects.create(
+        valid_route = RiverRoute.objects.create(
             origin=self.basin,
             destination=self.river_port_b,
             auth_code='1234abc'
+        )
+
+        self.assertEqual(valid_route.route(),
+            GeometryCollection(
+                Polygon([[0, 0], [0, 0.6], [0.6, 0.6], [0.6, 0], [0, 0]]),
+                Point([0.5, -0.5])
+            )
         )
 
         RiverRoute.objects.create(
