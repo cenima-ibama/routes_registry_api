@@ -97,7 +97,7 @@ class RoadRoute(models.Model):
         related_name='roadroute_origin')
     destination = models.ForeignKey(City, blank=True, null=True,
         related_name='roadroute_destination')
-    roads = models.CharField(max_length=255)
+    roads = models.TextField()
     objects = models.GeoManager()
 
     def __str__(self):

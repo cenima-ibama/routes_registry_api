@@ -1,4 +1,5 @@
 from django.contrib.gis import admin
+
 from .models import State, City, ShippingPlace, Airport
 from .models import RoadRoute, AerialRoute, SeaRoute, RiverRoute
 

@@ -27,9 +27,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
+        'NAME': 'router',
+        'USER': 'wille',
+        'PASSWORD': 'wille',
         'HOST': '',
         'PORT': '',
     }
